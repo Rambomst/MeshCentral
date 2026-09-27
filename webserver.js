@@ -6362,6 +6362,7 @@ module.exports.CreateWebServer = function (parent, db, args, certificates, doneF
             var argentInfo = obj.parent.meshAgentBinaries[req.query.id];
             if (domain.meshAgentBinaries && domain.meshAgentBinaries[req.query.id]) { argentInfo = domain.meshAgentBinaries[req.query.id]; }
             if (argentInfo == null) { try { res.sendStatus(404); } catch (ex) { } return; }
+            var customizeAgent = (argentInfo.platform != 'win32') || (argentInfo.customized !== false);
 
             // Download PDB debug files, only allowed for administrator or accounts with agent dump access
             if (req.query.pdb == 1) {
@@ -6389,7 +6390,7 @@ module.exports.CreateWebServer = function (parent, db, args, certificates, doneF
             if ((req.query.meshid == null) || (argentInfo.platform != 'win32')) {
                 // Get the agent filename
                 var meshagentFilename = argentInfo.rname;
-                if ((domain.agentcustomization != null) && (typeof domain.agentcustomization.filename == 'string')) { meshagentFilename = domain.agentcustomization.filename; }
+                if (customizeAgent && (domain.agentcustomization != null) && (typeof domain.agentcustomization.filename == 'string')) { meshagentFilename = domain.agentcustomization.filename; }
                 if (argentInfo.rname.endsWith('.apk') && !meshagentFilename.endsWith('.apk')) { meshagentFilename = meshagentFilename + '.apk'; }
                 if (argentInfo.mtime != null) { res.setHeader('Last-Modified', argentInfo.mtime.toUTCString()); }
                 if (req.query.zip == 1) { if (argentInfo.zdata != null) { setContentDispositionHeader(res, 'application/octet-stream', meshagentFilename + '.zip', null, 'meshagent.zip'); res.send(argentInfo.zdata); } else { try { res.sendStatus(404); } catch (ex) { } } return; } // Send compressed agent
@@ -6423,7 +6424,7 @@ module.exports.CreateWebServer = function (parent, db, args, certificates, doneF
                 if (argentInfo.rname.endsWith('.exe')) { meshfilename = argentInfo.rname.substring(0, argentInfo.rname.length - 4) + '-' + meshfilename + '.exe'; } else { meshfilename = argentInfo.rname + '-' + meshfilename; }
 
                 // Customize the mesh agent file name
-                if ((domain.agentcustomization != null) && (typeof domain.agentcustomization.filename == 'string')) {
+                if (customizeAgent && (domain.agentcustomization != null) && (typeof domain.agentcustomization.filename == 'string')) {
                     meshfilename = meshfilename.split('meshagent').join(domain.agentcustomization.filename).split('MeshAgent').join(domain.agentcustomization.filename);
                 }
 
@@ -6466,7 +6467,7 @@ module.exports.CreateWebServer = function (parent, db, args, certificates, doneF
                     if (obj.args.agentconfig) { for (var i in obj.args.agentconfig) { meshsettings += obj.args.agentconfig[i] + '\r\n'; } }
                     if (domain.agentconfig) { for (var i in domain.agentconfig) { meshsettings += domain.agentconfig[i] + '\r\n'; } }
                     if ((domain.agentnoproxy === true) || (obj.args.lanonly == true)) { meshsettings += 'ignoreProxyFile=1\r\n'; }
-                    if (domain.agentcustomization != null) {
+                    if (customizeAgent && (domain.agentcustomization != null)) {
                         if (domain.agentcustomization.displayname != null) { meshsettings += 'displayName=' + domain.agentcustomization.displayname + '\r\n'; }
                         if (domain.agentcustomization.description != null) { meshsettings += 'description=' + domain.agentcustomization.description + '\r\n'; }
                         if (domain.agentcustomization.companyname != null) { meshsettings += 'companyName=' + domain.agentcustomization.companyname + '\r\n'; }
@@ -6476,7 +6477,8 @@ module.exports.CreateWebServer = function (parent, db, args, certificates, doneF
                         if (domain.agentcustomization.foregroundcolor != null) { meshsettings += checkAgentColorString('foreground=', domain.agentcustomization.foregroundcolor); }
                         if (domain.agentcustomization.backgroundcolor != null) { meshsettings += checkAgentColorString('background=', domain.agentcustomization.backgroundcolor); }
                     }
-                    if (domain.agentTranslations != null) { meshsettings += 'translation=' + domain.agentTranslations + '\r\n'; } // Translation strings, not for MeshCentral Assistant
+                    var agentTranslations = customizeAgent ? domain.agentTranslations : obj.parent.agentTranslations;
+                    if (agentTranslations != null) { meshsettings += 'translation=' + agentTranslations + '\r\n'; } // Translation strings, not for MeshCentral Assistant
                 }
                 setContentDispositionHeader(res, 'application/octet-stream', meshfilename, null, argentInfo.rname);
                 if (argentInfo.mtime != null) { res.setHeader('Last-Modified', argentInfo.mtime.toUTCString()); }

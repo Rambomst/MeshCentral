@@ -1945,11 +1945,12 @@ function CreateMeshCentralServer(config, args) {
                 translations['zh-hk'] = translations['zh-cht'];
                 delete translations['zh-cht'];
             }
+            obj.agentTranslations = JSON.stringify(translations);
             // If there is domain customizations to the agent strings, do this here.
             for (var i in obj.config.domains) {
                 var domainTranslations = translations;
                 if ((typeof obj.config.domains[i].agentcustomization == 'object') && (typeof obj.config.domains[i].agentcustomization.installtext == 'string')) {
-                    domainTranslations = Object.assign({}, domainTranslations); // Shallow clone
+                    domainTranslations = JSON.parse(obj.agentTranslations);
                     for (var j in domainTranslations) { delete domainTranslations[j].description; }
                     domainTranslations.en.description = obj.config.domains[i].agentcustomization.installtext;
                 }
@@ -3761,6 +3762,7 @@ function CreateMeshCentralServer(config, args) {
             agentTable[archid] = Object.assign({}, obj.meshAgentsArchitectureNumbers[archid]);
             if (domain.id != '') delete agentTable[archid].codesign;
             agentTable[archid].path = agentpath;
+            if (buildDefault && (typeof buildDefault.customized == 'boolean')) { agentTable[archid].customized = buildDefault.customized; }
             const release = obj.agentDefaults && obj.agentDefaults.info(obj.meshAgentsArchitectureNumbers[archid].localname);
             const override = obj.path.join(obj.datapath, 'agents' + suffix, obj.meshAgentsArchitectureNumbers[archid].localname);
             if (release && !buildDefault && domain.id === '' && agentpath !== override) agentTable[archid].release = release;

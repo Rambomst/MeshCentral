@@ -2160,6 +2160,9 @@ function CreateAgentBuildDefaultStore(server, db, catalog) {
             try {
                 const item = await catalog.getArtifact(record.build, record.agentId, record.filename, domain);
                 defaults[record.agentId] = { path: item.path, build: record.build, filename: record.filename };
+                if (item.artifact.platform === 'windows' && item.artifact.processing && typeof item.artifact.processing.customized === 'boolean') {
+                    defaults[record.agentId].customized = item.artifact.processing.customized;
+                }
             } catch (ex) { server.debug('agentupdate', 'Server default ' + record.build + ': ' + ex.message); }
         }
         server.agentBuildDefaults[domain.id] = defaults;
