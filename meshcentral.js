@@ -1024,7 +1024,13 @@ function CreateMeshCentralServer(config, args) {
                     if (obj.args.showiplocations) { obj.db.GetAllType('iploc', function (err, docs) { console.log(docs); process.exit(); }); return; }
                     if (obj.args.logintoken) { obj.getLoginToken(obj.args.logintoken, function (r) { console.log(r); process.exit(); }); return; }
                     if (obj.args.logintokenkey) { obj.showLoginTokenKey(function (r) { console.log(r); process.exit(); }); return; }
-                    if (obj.args.recordencryptionrecode) { obj.db.performRecordEncryptionRecode(function (count) { console.log('Re-encoded ' + count + ' record(s).'); process.exit(); }); return; }
+                    if (obj.args.recordencryptionrecode) {
+                        obj.db.performRecordEncryptionRecode(function (count, err) {
+                            if (err) { console.error('Record encryption recode failed after ' + count + ' record(s): ' + err); process.exit(1); return; }
+                            console.log('Re-encoded ' + count + ' record(s).'); process.exit();
+                        });
+                        return;
+                    }
                     if (obj.args.dbstats) { obj.db.getDbStats(function (stats) { console.log(stats); process.exit(); }); return; }
                     if (obj.args.migratevolumeinfo) { require('./migrate-volume-info.js').migrateVolumeInfo(obj.db, function (err, r) { if (err != null) { console.log('Volume info migration error: ' + err); } else { console.log('Volume info migration complete. Scanned ' + r.scanned + ' sysinfo document(s), migrated ' + r.migrated + ', moved ' + r.keysMoved + ' key(s).'); } process.exit(); }); return; }
                     if (obj.args.createaccount) { // Create a new user account
@@ -1910,6 +1916,11 @@ function CreateMeshCentralServer(config, args) {
             }
         }
 
+        obj.agentCatalog = require('./agentbuilds').CreateAgentCatalog(obj);
+        obj.agentBuildDefaultStore = require('./agentbuilds').CreateAgentBuildDefaultStore(obj, obj.db, obj.agentCatalog);
+        try {
+            for (var id in obj.config.domains) { if (obj.config.domains[id].share == null) await obj.agentBuildDefaultStore.refresh(obj.config.domains[id]); }
+        } catch (ex) { console.error('Unable to load server default agents: ' + ex.message); process.exit(1); return; }
         obj.agentDefaults = require('./agentbuilds').CreateAgentDefaults(obj);
         // Never block server startup on default agent downloads. An offline or slow-network server must come up
         // promptly and run from cached, bundled or manually uploaded builds; downloads finish in the background.
@@ -1946,11 +1957,12 @@ function CreateMeshCentralServer(config, args) {
             }
         } catch (ex) { }
 
+        if ((obj.args.noagentupdate == 1) || (obj.args.noagentupdate == true)) { for (i in obj.meshAgentsArchitectureNumbers) { obj.meshAgentsArchitectureNumbers[i].update = false; } }
+
         // Load any domain specific agents
-        for (var i in obj.config.domains) { if ((i != '') && (obj.config.domains[i].share == null)) { obj.updateMeshAgentsTable(obj.config.domains[i], function () { }); } }
+        for (var i in obj.config.domains) { if ((i != '') && (obj.config.domains[i].share == null)) { await new Promise(function (resolve) { obj.updateMeshAgentsTable(obj.config.domains[i], resolve); }); } }
 
         // Load the list of mesh agents and install scripts
-        if ((obj.args.noagentupdate == 1) || (obj.args.noagentupdate == true)) { for (i in obj.meshAgentsArchitectureNumbers) { obj.meshAgentsArchitectureNumbers[i].update = false; } }
         obj.signMeshAgents(obj.config.domains[''], function () {
             obj.updateMeshAgentsTable(obj.config.domains[''], function () {
                 obj.updateMeshAgentInstallScripts();
@@ -3456,15 +3468,16 @@ function CreateMeshCentralServer(config, args) {
                     // If not signed correctly, sign it. First, create the server signed agent folder if needed
                     try { obj.fs.mkdirSync(serverSignedAgentsPath); } catch (ex) { }
                     const xagentSignedFunc = function agentSignedFunc(err, size) {
+                        if (err == null) { err = obj.callExternalSignJob(agentSignedFunc.signingArguments); }
                         if (err == null) {
                             signedSources[archid] = agentpath;
                             // Agent was signed succesfuly
                             console.log(obj.common.format('Code signed {0}.', agentSignedFunc.objx.meshAgentsArchitectureNumbers[agentSignedFunc.archid].localname));
                         } else {
                             // Failed to sign agent
+                            try { obj.fs.unlinkSync(agentSignedFunc.signeedagentpath); } catch (ex) { }
                             addServerWarning('Failed to sign \"' + agentSignedFunc.objx.meshAgentsArchitectureNumbers[agentSignedFunc.archid].localname + '\": ' + err, 22, [agentSignedFunc.objx.meshAgentsArchitectureNumbers[agentSignedFunc.archid].localname, err]);
                         }
-                        obj.callExternalSignJob(agentSignedFunc.signingArguments); // Call external signing job regardless of success or failure
                         // Wait 2 seconds between each codesign to avoid rate limiting from Sectigo's timestamp server
                         // https://www.sectigo.com/resource-library/time-stamping-server
                         setTimeout(signNextAgent, 2000);
@@ -3550,24 +3563,28 @@ function CreateMeshCentralServer(config, args) {
     }
 
     obj.callExternalSignJob = function (signingArguments) {
-        if (obj.config.settings && !obj.config.settings.externalsignjob) {
-            return;
+        if (!obj.config.settings || !obj.config.settings.externalsignjob) {
+            return null;
         }
         obj.debug('main', "External signing job called for file: " + signingArguments.out);
         
         const { spawnSync } = require('child_process');
 
-        const signResult = spawnSync('"' + obj.config.settings.externalsignjob + '"', ['"' + signingArguments.out + '"'], {
-            encoding: 'utf-8',
-            shell: true,
-            stdio: 'inherit'
-        }); 
+        var signResult;
+        try {
+            signResult = spawnSync('"' + obj.config.settings.externalsignjob + '"', ['"' + signingArguments.out + '"'], {
+                encoding: 'utf-8',
+                shell: true,
+                stdio: 'inherit'
+            });
+        } catch (ex) { signResult = { error: ex }; }
 
         if (signResult.error || signResult.status !== 0) {
             obj.debug('main', "External signing failed for file: " + signingArguments.out);
             console.error("External signing failed for file: " + signingArguments.out);
-            return;
+            return signResult.error || new Error('External signing failed (' + (signResult.signal ? ('signal ' + signResult.signal) : ('exit code ' + signResult.status)) + ').');
         }
+        return null;
     }
 
     // Return the agent code-signing certificate (custom agentsigningcert.pem, else the server codesign cert), or null.
@@ -3652,33 +3669,35 @@ function CreateMeshCentralServer(config, args) {
         const signingArguments = { out: destPath, desc: signDesc, url: signUrl, time: timeStampUrl, proxy: timeStampProxy, resChanges: resChanges };
         const done = function (err) {
             try { handler.close(); } catch (ex) { }
-            if (err == null) { obj.callExternalSignJob(signingArguments); }
+            if (err == null) { err = obj.callExternalSignJob(signingArguments); }
             func(err || null, { signed: (err == null), customized: (err == null) && resChanges });
         };
         if (resChanges == false) { handler.sign(cert, signingArguments, done); } else { handler.writeExecutable(signingArguments, cert, done); }
     }
 
-    // Rebuild the in-memory agent table at runtime so a newly set (or cleared) meshcentral-data/agents override is
-    // served without a restart. Reloads are serialized per domain and coalesced (a request arriving mid-reload
-    // triggers one more pass), because updateMeshAgentsTable mutates shared per-architecture state.
+    // Coalesce reloads so an older hash read cannot overwrite a newer selection.
     obj.reloadMeshAgents = function (domain, func) {
         const key = domain.id || '';
         if (obj.agentReloadState == null) obj.agentReloadState = {};
         var state = obj.agentReloadState[key];
         if (state != null) { state.waiting.push(typeof func == 'function' ? func : function () { }); state.rerun = true; return; }
         state = obj.agentReloadState[key] = { waiting: [typeof func == 'function' ? func : function () { }], rerun: false };
+        function done(err) {
+            const callbacks = state.waiting;
+            delete obj.agentReloadState[key];
+            for (var i in callbacks) { try { callbacks[i](err); } catch (ex) { } }
+        }
         function pass() {
             state.rerun = false;
-            obj.updateMeshAgentsTable(domain, function () {
-                // Drop entries whose backing file no longer exists (e.g. after clearing an override with nothing to revert to).
-                const table = (domain.id == '') ? obj.meshAgentBinaries : domain.meshAgentBinaries;
-                if (table != null) { for (var archid in table) { try { if (!obj.fs.existsSync(table[archid].path)) delete table[archid]; } catch (ex) { } } }
-                if (domain.id == '') { try { obj.updateMeshAgentInstallScripts(); } catch (ex) { } }
-                if (state.rerun) { pass(); return; }
-                const callbacks = state.waiting;
-                delete obj.agentReloadState[key];
-                for (var i in callbacks) { try { callbacks[i](); } catch (ex) { } }
-            });
+            Promise.resolve().then(function () {
+                if (obj.agentBuildDefaultStore) return obj.agentBuildDefaultStore.refresh(domain);
+            }).then(function () {
+                obj.updateMeshAgentsTable(domain, function () {
+                    if (domain.id == '') { try { obj.updateMeshAgentInstallScripts(); } catch (ex) { } }
+                    if (state.rerun) { pass(); return; }
+                    done();
+                });
+            }).catch(done);
         }
         pass();
     }
@@ -3699,30 +3718,35 @@ function CreateMeshCentralServer(config, args) {
 
         // Setup the domain is specified
         var objx = domain, suffix = '';
-        if (domain.id == '') { objx = obj; } else { suffix = '-' + domain.id; objx.meshAgentBinaries = {}; }
+        if (domain.id == '') { objx = obj; } else { suffix = '-' + domain.id; }
+        const agentTable = {};
+        function done() { objx.meshAgentBinaries = agentTable; if (func != null) func(); }
 
         // Load agent information file. This includes the data & time of the agent.
-        const agentInfo = [];
+        var agentInfo = [];
         try { agentInfo = JSON.parse(obj.fs.readFileSync(obj.path.join(__dirname, 'agents', 'hashagents.json'), 'utf8')); } catch (ex) { }
 
         var archcount = 0;
         for (var archid in obj.meshAgentsArchitectureNumbers) {
             var agentpath;
-            if (domain.id == '') {
+            const buildDefault = obj.agentBuildDefaults && obj.agentBuildDefaults[domain.id] && obj.agentBuildDefaults[domain.id][archid];
+            // An admin-selected build takes precedence over manual agents-folder overrides.
+            if (buildDefault) {
+                agentpath = buildDefault.path;
+            } else if (domain.id == '') {
                 // Load all agents when processing the default domain
                 agentpath = obj.getAgentBinaryPath(obj.meshAgentsArchitectureNumbers[archid].localname);
                 if (obj.meshAgentsArchitectureNumbers[archid].unsigned !== true) {
                     const agentpath2 = obj.path.join(obj.datapath, 'signedagents' + suffix, obj.meshAgentsArchitectureNumbers[archid].localname);
-                    const release = obj.agentDefaults && obj.agentDefaults.info(obj.meshAgentsArchitectureNumbers[archid].localname);
                     // A failed signing attempt must not reuse a copy from another release.
-                    if (agentpath && obj.fs.existsSync(agentpath2) && (!release || ((obj.signedAgentSources || {})[archid] === agentpath))) { agentpath = agentpath2; }
+                    if (agentpath && obj.fs.existsSync(agentpath2) && ((obj.signedAgentSources || {})[archid] === agentpath)) { agentpath = agentpath2; }
                     const agentpath3 = obj.path.join(obj.datapath, 'agents' + suffix, obj.meshAgentsArchitectureNumbers[archid].localname);
                     if (obj.fs.existsSync(agentpath3)) { agentpath = agentpath3; } // If the agent is present in "meshcentral-data/agents", use that one instead.
                 }
             } else {
                 // When processing an extra domain, only load agents that are specific to that domain
                 agentpath = obj.path.join(obj.datapath, 'agents' + suffix, obj.meshAgentsArchitectureNumbers[archid].localname);
-                if (obj.fs.existsSync(agentpath)) { delete obj.meshAgentsArchitectureNumbers[archid].codesign; } else { continue; } // If the agent is not present in "meshcentral-data/agents" skip.
+                if (!obj.fs.existsSync(agentpath)) continue;
             }
 
             if (!agentpath) continue;
@@ -3730,22 +3754,23 @@ function CreateMeshCentralServer(config, args) {
             // Fetch agent binary information
             var stats = null;
             try { stats = obj.fs.statSync(agentpath); } catch (ex) { }
-            if ((stats == null)) continue; // If this agent does not exist, skip it.
+            if ((stats == null) || !stats.isFile()) continue;
 
             // Setup agent information
             archcount++;
-            objx.meshAgentBinaries[archid] = Object.assign({}, obj.meshAgentsArchitectureNumbers[archid]);
-            objx.meshAgentBinaries[archid].path = agentpath;
+            agentTable[archid] = Object.assign({}, obj.meshAgentsArchitectureNumbers[archid]);
+            if (domain.id != '') delete agentTable[archid].codesign;
+            agentTable[archid].path = agentpath;
             const release = obj.agentDefaults && obj.agentDefaults.info(obj.meshAgentsArchitectureNumbers[archid].localname);
             const override = obj.path.join(obj.datapath, 'agents' + suffix, obj.meshAgentsArchitectureNumbers[archid].localname);
-            if (release && domain.id === '' && agentpath !== override) objx.meshAgentBinaries[archid].release = release;
-            objx.meshAgentBinaries[archid].url = 'http://' + obj.certificates.CommonName + ':' + ((typeof obj.args.aliasport == 'number') ? obj.args.aliasport : obj.args.port) + '/meshagents?id=' + archid;
-            objx.meshAgentBinaries[archid].size = stats.size;
-            if ((agentInfo[archid] != null) && (agentInfo[archid].mtime != null)) { objx.meshAgentBinaries[archid].mtime = new Date(agentInfo[archid].mtime); } // Set agent time if available
+            if (release && !buildDefault && domain.id === '' && agentpath !== override) agentTable[archid].release = release;
+            agentTable[archid].url = 'http://' + obj.certificates.CommonName + ':' + ((typeof obj.args.aliasport == 'number') ? obj.args.aliasport : obj.args.port) + '/meshagents?id=' + archid;
+            agentTable[archid].size = stats.size;
+            if ((agentInfo[archid] != null) && (agentInfo[archid].mtime != null)) { agentTable[archid].mtime = new Date(agentInfo[archid].mtime); } // Set agent time if available
 
             // If this is a windows binary, pull binary information
             if (obj.meshAgentsArchitectureNumbers[archid].platform == 'win32') {
-                try { objx.meshAgentBinaries[archid].pe = obj.exeHandler.parseWindowsExecutable(agentpath); } catch (ex) { }
+                try { agentTable[archid].pe = obj.exeHandler.parseWindowsExecutable(agentpath); } catch (ex) { }
             }
 
             // If agents must be stored in RAM or if this is a Windows 32/64/ARM64 agent, load the agent in RAM.
@@ -3753,7 +3778,7 @@ function CreateMeshCentralServer(config, args) {
                 if ((archid == 3) || (archid == 4) || (archid == 43)) {
                     // Load the agent with a random msh added to it.
                     const outStream = new require('stream').Duplex();
-                    outStream.meshAgentBinary = objx.meshAgentBinaries[archid];
+                    outStream.meshAgentBinary = agentTable[archid];
                     if (agentSignCertInfo) { outStream.meshAgentBinary.randomMsh = agentSignCertInfo.cert.subject.hash; } else { outStream.meshAgentBinary.randomMsh = obj.crypto.randomBytes(16).toString('hex'); }
                     outStream.bufferList = [];
                     outStream._write = function (chunk, encoding, callback) { this.bufferList.push(chunk); if (callback) callback(); }; // Append the chuck.
@@ -3812,11 +3837,11 @@ function CreateMeshCentralServer(config, args) {
                             destinationStream: outStream,
                             randomPolicy: true, // Indicates that the msh policy is random data.
                             msh: outStream.meshAgentBinary.randomMsh,
-                            peinfo: objx.meshAgentBinaries[archid].pe
+                            peinfo: agentTable[archid].pe
                         });
                 } else {
                     // Load the agent as-is
-                    objx.meshAgentBinaries[archid].data = obj.fs.readFileSync(agentpath);
+                    agentTable[archid].data = obj.fs.readFileSync(agentpath);
 
                     // Compress the agent using ZIP
                     const archive = require('archiver')('zip', { level: 9 }); // Sets the compression method.
@@ -3839,14 +3864,14 @@ function CreateMeshCentralServer(config, args) {
                         //console.log('Packed', onZipData.x.size, onZipData.x.zsize);
                     }
                     const onZipError = function onZipError() { delete onZipData.x.zacc; }
-                    objx.meshAgentBinaries[archid].zacc = [];
-                    onZipData.x = objx.meshAgentBinaries[archid];
-                    onZipEnd.x = objx.meshAgentBinaries[archid];
-                    onZipError.x = objx.meshAgentBinaries[archid];
+                    agentTable[archid].zacc = [];
+                    onZipData.x = agentTable[archid];
+                    onZipEnd.x = agentTable[archid];
+                    onZipError.x = agentTable[archid];
                     archive.on('data', onZipData);
                     archive.on('end', onZipEnd);
                     archive.on('error', onZipError);
-                    archive.append(objx.meshAgentBinaries[archid].data, { name: 'meshagent' });
+                    archive.append(agentTable[archid].data, { name: 'meshagent' });
                     archive.finalize();
                 }
             }
@@ -3855,22 +3880,22 @@ function CreateMeshCentralServer(config, args) {
             const hashStream = obj.crypto.createHash('sha384');
             hashStream.archid = archid;
             hashStream.on('data', function (data) {
-                objx.meshAgentBinaries[this.archid].hash = data.toString('binary');
-                objx.meshAgentBinaries[this.archid].hashhex = data.toString('hex');
-                if ((--archcount == 0) && (func != null)) { func(); }
+                agentTable[this.archid].hash = data.toString('binary');
+                agentTable[this.archid].hashhex = data.toString('hex');
+                if (--archcount == 0) done();
             });
             const options = { sourcePath: agentpath, targetStream: hashStream, platform: obj.meshAgentsArchitectureNumbers[archid].platform };
-            if (objx.meshAgentBinaries[archid].pe != null) { options.peinfo = objx.meshAgentBinaries[archid].pe; }
+            if (agentTable[archid].pe != null) { options.peinfo = agentTable[archid].pe; }
             obj.exeHandler.hashExecutableFile(options);
 
             // If we are not loading Windows binaries to RAM, compute the RAW file hash of the signed binaries here.
             if ((obj.args.agentsinram === false) && ((archid == 3) || (archid == 4) || (archid == 43))) {
                 const hash = obj.crypto.createHash('sha384').update(obj.fs.readFileSync(agentpath));
-                objx.meshAgentBinaries[archid].fileHash = hash.digest('binary');
-                objx.meshAgentBinaries[archid].fileHashHex = Buffer.from(objx.meshAgentBinaries[archid].fileHash, 'binary').toString('hex');
+                agentTable[archid].fileHash = hash.digest('binary');
+                agentTable[archid].fileHashHex = Buffer.from(agentTable[archid].fileHash, 'binary').toString('hex');
             }
         }
-        if ((archcount === 0) && (func != null)) func();
+        if (archcount === 0) done();
     };
 
     // Generate a time limited user login token

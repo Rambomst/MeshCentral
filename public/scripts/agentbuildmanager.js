@@ -145,12 +145,12 @@ function agentManagerGoto(mode) {
 function agentManagerOpen(mode, options) {
     if (xxdialogMode || !userinfo || userinfo.siteadmin != 0xFFFFFFFF) return false;
     var button = Q('idx_dlgOkButton'), cancel = Q('idx_dlgCancelButton');
-    var titles = { defaults: "Default agent downloads", 'import': "Import agent build", upload: "Upload agent build", usage: "Build usage", manage: "Manage agent build", bulk: "Deploy agent build", job: "Agent deployment", jobs: "Agent deployments" };
+    var titles = { defaults: "Default agent downloads", 'import': "Import agent build", upload: "Upload agent build", usage: "Build usage", manage: "Manage agent build", cleardefault: "Clear server default", bulk: "Deploy agent build", job: "Agent deployment", jobs: "Agent deployments" };
     var title = titles[mode] || titles.jobs;
     agentManager = Object.assign({ mode: mode, offset: 0, focus: '', state: '', buttonText: button.tagName === 'INPUT' ? button.value : button.textContent, cancelText: cancel ? (cancel.tagName === 'INPUT' ? cancel.value : cancel.textContent) : '' }, options || {});
     // Manage is two fields and an action select; everything else carries device rows, file rows or 96
     // character hashes and needs the width the device dialog uses.
-    showAgentManagerDialog(title, mode === 'manage' ? null : 'large');
+    showAgentManagerDialog(title, (mode === 'manage' || mode === 'cleardefault') ? null : 'large');
     if (Q('dialog')) Q('dialog').classList.add('agent-manager-dialog');
     agentBuildCancelButton("Close");
     agentManagerHtml('<p role="status">' + "Loading..." + '</p>');
@@ -163,6 +163,7 @@ function agentManagerOpen(mode, options) {
     if (mode === 'jobs') agentManagerJobs(0);
     if (mode === 'job') agentManagerJob(agentManager.id, 0);
     if (mode === 'defaults') agentManagerDefaults(false);
+    if (mode === 'cleardefault') agentManagerClearDefaultForm();
     return false;
 }
 function agentManagerRun(area, command, callback) {
@@ -397,6 +398,16 @@ function agentManagerUploadCommit() {
     });
 }
 
+function agentManagerClearDefaultForm() {
+    var build = agentManager.build, agentId = agentManager.agentId, label = agentManager.label || '';
+    var type = agentId != null ? agentManagerAgentType(agentId) : '';
+    agentManagerSubject("Clear server default", type + (label ? (' / ' + label) : ''));
+    agentManagerHtml('<p>' + "Removes this build selection. This agent type falls back to the remaining server, domain, release or bundled default. Devices following the default may update on reconnect." + '</p>');
+    agentManager.submit = function () {
+        agentManagerRun('catalog', { op: 'cleardefault', build: build, agentId: agentId }, function () { agentManagerClose(); agentCatalogFocus = null; refreshAgentCatalog(); });
+    };
+    agentManagerButton("Clear default", true);
+}
 function agentManagerManageForm() {
     agentManagerRun('catalog', { op: 'list' }, function (data) {
         var build = data.builds.filter(function (x) { return x.id === agentManager.build; })[0], options, html;
@@ -420,10 +431,14 @@ function agentManagerManageForm() {
             fileRows += '<div class="agent-manager-row"><div><b>' + EscapeHtml(art.filename) + '</b></div><div>' + EscapeHtml(agentManagerAgentType(art.id)) + '</div><div class="agent-manager-detail">' + meta + '</div></div>';
         }
         html = (build.uploadedAt ? ('<p class="agent-muted">' + "Added" + ' ' + EscapeHtml(printDateTime(new Date(build.uploadedAt))) + '</p>') : '') + fileRows + agentManagerControl('agentManageAction', "Action", options + '</select>') + '<div id="agentManageNote"></div>';
+        if (isDefault && build.managed) html += '<div id="agentManageDefaultWarning" style="display:none"><p class="agent-warn">' + "This build supplies a server default. Removing it clears those selections. Devices following the default may update on reconnect." + '</p><label class="agent-manager-confirm"><input id="agentManageConfirmDefault" type="checkbox" onchange="agentManagerManageValidate()" /> ' + "I understand that removing this build also clears its server defaults." + '</label></div>';
         if (!build.managed) html += '<p class="agent-muted">' + "This build was not uploaded to this server, so it cannot be removed here." + '</p>';
         agentManagerHtml(html);
         agentManager.submit = function () {
-            agentManagerRun('catalog', { op: Q('agentManageAction').value, build: build.id }, function () { agentManagerClose(); agentCatalogFocus = null; refreshAgentCatalog(); });
+            agentManagerManageValidate();
+            if (agentManager.blocked) { agentManagerShowReason(); return; }
+            var confirm = Q('agentManageConfirmDefault');
+            agentManagerRun('catalog', { op: Q('agentManageAction').value, build: build.id, confirmDefault: !!(confirm && confirm.checked) }, function () { agentManagerClose(); agentCatalogFocus = null; refreshAgentCatalog(); });
         };
         agentManagerManageChanged();
     });
@@ -434,11 +449,21 @@ function agentManagerManageChanged() {
         archive: "Archiving hides this build from new selections. Devices already pinned to it keep running it and the server keeps its stored copies.",
         restore: "Restoring puts this build back in the list of builds that can be pinned.",
         remove: "Removing deletes the uploaded files from this server. It is refused while a device or a deployment still references the build.",
-        setdefault: "New Add Agent downloads will serve this build's files for their agent types on this server. This takes effect immediately.",
-        cleardefault: "Reverts these agent types to the release or bundled default. Devices already installed are not changed."
+        setdefault: "Agent downloads will serve this build's files immediately. Devices following the default may update on reconnect.",
+        cleardefault: "Removes this build selection. These agent types fall back to the remaining server, domain, release or bundled defaults. Devices following the default may update on reconnect."
     };
     agentBuildHtml('agentManageNote', '<p class="' + ((action === 'remove' || action === 'setdefault') ? 'agent-warn' : 'agent-muted') + '">' + notes[action] + '</p>');
-    agentManagerButton((action === 'remove') ? "Remove build" : (action === 'restore') ? "Restore build" : (action === 'setdefault') ? "Set as default" : (action === 'cleardefault') ? "Clear default" : "Archive build", true);
+    if (Q('agentManageConfirmDefault')) {
+        Q('agentManageConfirmDefault').checked = false;
+        QV('agentManageDefaultWarning', action === 'remove');
+    }
+    agentManagerManageValidate();
+}
+function agentManagerManageValidate() {
+    var action = Q('agentManageAction').value, confirm = Q('agentManageConfirmDefault');
+    var reason = (action === 'remove' && confirm && !confirm.checked) ? "Confirm that removing this build also clears its server defaults." : '';
+    agentManager.focus = reason ? 'agentManageConfirmDefault' : '';
+    agentManagerButton((action === 'remove') ? "Remove build" : (action === 'restore') ? "Restore build" : (action === 'setdefault') ? "Set as default" : (action === 'cleardefault') ? "Clear default" : "Archive build", !reason, reason);
 }
 
 function agentManagerUsageSearch() { agentManagerUsage(0); }

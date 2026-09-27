@@ -6264,7 +6264,7 @@ module.exports.CreateWebServer = function (parent, db, args, certificates, doneF
         });
     }
 
-    const agentCatalog = require('./agentbuilds.js').CreateAgentCatalog(parent);
+    const agentCatalog = parent.agentCatalog || require('./agentbuilds.js').CreateAgentCatalog(parent);
     obj.agentBuilds = require('./agentbuilds.js').CreateAgentBuilds(obj, db, agentCatalog);
     obj.agentBuildAdmin = require('./agentbuilds.js').CreateAgentBuildAdmin(obj, db, agentCatalog);
 
@@ -6315,10 +6315,10 @@ module.exports.CreateWebServer = function (parent, db, args, certificates, doneF
                 db.GetAgentTypeCounts(domain.id, function (err, counts) { resolve(err ? null : counts); });
             })]).then(async function (results) {
                 const catalog = results[0], counts = results[1];
+                if (obj.agentBuildUsage) await obj.agentBuildUsage.catalogUsage(domain, catalog);
                 for (const agent of catalog.defaults) agent.devices = counts == null ? null : (counts[agent.id] || 0);
                 catalog.defaults.sort(function (a, b) { return b.devices - a.devices || a.id - b.id; });
                 catalog.countsAvailable = counts != null;
-                if (obj.agentBuildUsage) await obj.agentBuildUsage.catalogUsage(domain, catalog);
                 render(req, res, getRenderPage('agentcatalog', req, domain), getRenderArgs({
                     catalog: catalog, serverVersion: parent.currentVer, lang: 'en'
                 }, req, domain), user);

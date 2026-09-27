@@ -656,6 +656,18 @@ function CreateAgentBuildUsage(parent, db) {
     }
     async function catalogUsage(domain, catalog) {
         const rows = await snapshot(domain);
+        for await (const record of storage.records(db, 'agentbuilddefault', domain.id)) {
+            const arch = parent.parent.meshAgentsArchitectureNumbers[record.agentId];
+            if (!arch || arch.localname !== record.localname) continue;
+            let file = catalog.defaults.find(x => x.id === record.agentId);
+            if (!file) {
+                file = { id: record.agentId, name: arch.desc, filename: arch.localname, source: 'Unavailable' };
+                catalog.defaults.push(file);
+            }
+            const build = catalog.builds.find(x => x.id === record.build);
+            file.defaultBuild = { id: record.build, name: build ? build.name : (record.name || record.build), filename: record.filename };
+            if (!((parent.parent.agentBuildDefaults || {})[domain.id] || {})[record.agentId]) file.defaultBuild.unavailable = true;
+        }
         for (const file of catalog.defaults) file.usage = counts(rows, { hash: file.agentHash, agentId: file.id });
         for (const build of catalog.builds) for (const file of build.artifacts) file.usage = counts(rows, { hash: file.agentHash, agentId: file.id, build: build.id, filename: file.filename });
         return catalog;
@@ -1340,13 +1352,14 @@ function CreateAgentDefaults(parent, options = {}) {
     const names = new Set(Object.values(parent.meshAgentsArchitectureNumbers).map(x => x.localname));
     for (const name of ['MeshCentralRouter.exe', 'MeshCentralRouter.dmg', 'MeshCentralAssistant.exe']) names.add(name);
     const selected = new Map(), entries = new Map();
-    let busy = null, errors = [], loaded = false, started = false, restartRequired = false, updates = null;
+    let busy = null, errors = [], loaded = false, started = false, restartRequired = false, updates = null, activePaths = null;
 
     function regular(filename) {
         try { return fs.lstatSync(filename).isFile(); } catch (ex) { return false; }
     }
     function sourcePath(name) {
         if (!names.has(name)) return null;
+        if (activePaths) return activePaths.get(name);
         if (selected.has(name)) return selected.get(name);
         if (entries.has(name)) return null;
         const local = path.join(root, name);
@@ -1385,6 +1398,7 @@ function CreateAgentDefaults(parent, options = {}) {
         for (const [name, file] of files) entries.set(name, file);
         loaded = true;
         updates = CreateAgentReleaseUpdates(settings, client, entries.values());
+        if (activePaths) updates.start();
     }
     async function verified(filename, file) {
         let handle;
@@ -1460,7 +1474,7 @@ function CreateAgentDefaults(parent, options = {}) {
                         delete file.error; delete file.received;
                         try {
                             const filename = await resolve(file, controller.signal, localFiles);
-                            if (initial) selected.set(file.filename, filename);
+                            if (initial && !activePaths) selected.set(file.filename, filename);
                             else if (sourcePath(file.filename) !== filename) restartRequired = true;
                         } catch (ex) {
                             file.status = 'Unavailable'; file.error = ex.message;
@@ -1477,7 +1491,12 @@ function CreateAgentDefaults(parent, options = {}) {
         if (!file || !selected.has(name)) return null;
         return { repository: file.repository, tag: file.tag, sourceUrl: file.sourceUrl, sha384: file.sha384 };
     }
-    return { prepare, status, sourcePath, info, start: () => { if (updates) updates.start(); }, checkUpdates: () => updates ? updates.check(true) : Promise.resolve() };
+    function start() {
+        // Signing and table loading must see the same files after the startup download wait ends.
+        if (!activePaths) activePaths = new Map(Array.from(names, name => [name, sourcePath(name)]));
+        if (updates) updates.start();
+    }
+    return { prepare, status, sourcePath, info, start, checkUpdates: () => updates ? updates.check(true) : Promise.resolve() };
 }
 
 // Build catalog: bundled agents, uploads and imports
@@ -1693,11 +1712,6 @@ function CreateAgentCatalog(parent, directory) {
             }
             if (build.artifacts.length) builds.push(build);
         }
-        // Tag default rows that a catalog build currently supplies, so the UI can show provenance and offer a clear action.
-        try {
-            const state = JSON.parse(await fs.promises.readFile(path.join(managedRoot(domain), '.state', 'serverdefault.json'), 'utf8'));
-            if (state && state.entries) for (const row of defaults) { const entry = state.entries[row.id]; if (entry && entry.localname === row.filename) row.defaultBuild = { id: entry.build, name: entry.name, filename: entry.filename }; }
-        } catch (ex) { if (ex.code !== 'ENOENT') errors.push('Unable to read server default state'); }
         return { defaults: defaults, bundled: bundled, builds: builds, errors: errors, downloads: parent.agentDefaults ? parent.agentDefaults.status() : null };
     }
 
@@ -2102,13 +2116,88 @@ function CreateAgentBuilds(parent, db, catalog) {
     return { command: command, resolve: resolve, updateUrl: updateUrl, download: download, receive: receive, observe: observe };
 }
 
+function CreateAgentBuildDefaultStore(server, db, catalog) {
+    const migrated = new Set(), changing = new Set();
+    server.agentBuildDefaults = Object.create(null);
+    const key = (domain, agentId) => 'abdf' + storage.domainKey(domain) + '_' + agentId;
+    function valid(domain, record) {
+        const arch = server.meshAgentsArchitectureNumbers[record.agentId];
+        return record.domain === domain.id && Number.isInteger(record.agentId) && record.agentId > 0 && record.agentId < 10000 &&
+            arch && arch.localname === record.localname && typeof record.build === 'string' && /^[a-zA-Z0-9_][a-zA-Z0-9_.-]*$/.test(record.build) &&
+            typeof record.filename === 'string' && /^[a-zA-Z0-9_][a-zA-Z0-9_.-]*$/.test(record.filename);
+    }
+    async function migrate(domain) {
+        if (migrated.has(domain.id)) return;
+        const statePath = path.join(catalog.managedRoot(domain), '.state', 'serverdefault.json');
+        let state;
+        try {
+            const stat = await fs.promises.lstat(statePath);
+            if (!stat.isFile() || stat.size > 1024 * 1024) throw new Error('Invalid server default state');
+            state = JSON.parse(await fs.promises.readFile(statePath, 'utf8'));
+        } catch (ex) { if (ex.code === 'ENOENT') { migrated.add(domain.id); return; } throw ex; }
+        if (!state || !state.entries || typeof state.entries !== 'object' || Array.isArray(state.entries)) throw new Error('Invalid server default state');
+        const records = Object.entries(state.entries).map(([id, entry]) => Object.assign({}, entry, { _id: key(domain, Number(id)), type: 'agentbuilddefault', domain: domain.id, agentId: Number(id) }));
+        if (records.some(record => !valid(domain, record))) throw new Error('Invalid server default entry');
+        const marker = 'abdm' + storage.domainKey(domain);
+        if (!await storage.get(db, marker)) {
+            for (const record of records) if (!await storage.get(db, record._id)) await storage.set(db, record);
+            // A cleanup failure must not let the old JSON restore defaults cleared later.
+            await storage.set(db, { _id: marker, type: 'agentbuildmigration', domain: domain.id });
+        }
+        const directory = path.join(server.datapath, 'agents' + (domain.id ? '-' + domain.id : ''));
+        try {
+            if (!(await fs.promises.lstat(directory)).isDirectory()) throw new Error('Invalid agents directory');
+            for (const record of records) await fs.promises.rm(path.join(directory, record.localname), { force: true });
+        } catch (ex) { if (ex.code !== 'ENOENT') throw ex; }
+        await fs.promises.unlink(statePath);
+        migrated.add(domain.id);
+    }
+    async function refresh(domain) {
+        await migrate(domain);
+        const defaults = Object.create(null);
+        for await (const record of storage.records(db, 'agentbuilddefault', domain.id)) {
+            if (!valid(domain, record)) throw new Error('Invalid server default record');
+            try {
+                const item = await catalog.getArtifact(record.build, record.agentId, record.filename, domain);
+                defaults[record.agentId] = { path: item.path, build: record.build, filename: record.filename };
+            } catch (ex) { server.debug('agentupdate', 'Server default ' + record.build + ': ' + ex.message); }
+        }
+        server.agentBuildDefaults[domain.id] = defaults;
+    }
+    async function reload(domain) {
+        await refresh(domain);
+        await new Promise((resolve, reject) => server.reloadMeshAgents(domain, err => err ? reject(err) : resolve()));
+    }
+    async function use(domain, callback) {
+        if (changing.has(domain.id)) throw new Error('Server defaults are being changed. Try again when the operation finishes.');
+        changing.add(domain.id);
+        try { await migrate(domain); return await callback(); }
+        finally { changing.delete(domain.id); }
+    }
+    return { key, refresh, reload, use };
+}
+
 // Administrative command dispatch (catalog, imports, uploads, deployments, defaults)
 function CreateAgentBuildAdmin(parent, db, catalog) {
     const uploads = CreateAgentBuildUpload(parent.parent, catalog);
     const imports = CreateAgentBuildImport(uploads);
     parent.agentBuildUsage = CreateAgentBuildUsage(parent, db);
     const deployments = CreateAgentDeployment(parent, db, catalog, parent.agentBuilds);
+    const defaults = parent.parent.agentBuildDefaultStore || (parent.parent.agentBuildDefaultStore = CreateAgentBuildDefaultStore(parent.parent, db, catalog));
     let defaultDownload = null, defaultError = null;
+    async function clearServerDefault(domain, buildId, agentId) {
+        let cleared = 0, name = null;
+        try {
+            for await (const record of storage.records(db, 'agentbuilddefault', domain.id)) {
+                if (record.build !== buildId || (agentId != null && record.agentId !== agentId)) continue;
+                if (parent.parent.multiServer) throw new Error('Server default changes are not available on peered servers.');
+                await storage.remove(db, record._id);
+                if (!name) name = record.name;
+                cleared++;
+            }
+        } finally { await defaults.reload(domain); }
+        return { cleared, name };
+    }
     async function command(domain, user, request, loginToken) {
         storage.admin(domain, user, loginToken);
         if (request.area === 'defaults') {
@@ -2146,77 +2235,61 @@ function CreateAgentBuildAdmin(parent, db, catalog) {
         if (request.area !== 'catalog') throw new Error('Invalid operation');
         if (request.op === 'list') return parent.agentBuildUsage.catalogUsage(domain, await catalog.getCatalog(domain));
         if (request.op === 'setdefault' || request.op === 'cleardefault') {
-            const agentsDir = path.join(parent.parent.datapath, 'agents' + (domain.id ? '-' + domain.id : ''));
-            const statePath = path.join(catalog.managedRoot(domain), '.state', 'serverdefault.json');
-            const readState = async function () {
-                try { const s = JSON.parse(await fs.promises.readFile(statePath, 'utf8')); return (s && typeof s.entries === 'object' && s.entries) ? s : { entries: {} }; }
-                catch (ex) { if (ex.code === 'ENOENT') return { entries: {} }; throw ex; }
-            };
-            const writeState = async function (state) {
-                const dir = path.dirname(statePath);
-                await fs.promises.mkdir(dir, { recursive: true, mode: 0o700 });
-                const tmp = path.join(dir, crypto.randomBytes(16).toString('hex') + '.tmp');
-                await fs.promises.writeFile(tmp, JSON.stringify(state), { flag: 'wx', mode: 0o600 });
-                await fs.promises.rename(tmp, statePath);
-            };
-            return catalog.use(domain, request.build, async function () {
+            if (parent.parent.multiServer) throw new Error('Server default changes are not available on peered servers.');
+            if (request.agentId != null && (!Number.isInteger(request.agentId) || request.agentId <= 0 || request.agentId >= 10000)) throw new Error('Invalid agent type');
+            return defaults.use(domain, () => catalog.use(domain, request.build, async function () {
                 const build = (await catalog.getCatalog(domain)).builds.find(x => x.id === request.build);
-                if (!build) throw new Error('Build is unavailable');
-                const state = await readState();
                 if (request.op === 'setdefault') {
+                    if (!build) throw new Error('Build is unavailable');
                     if (build.archived) throw new Error('Restore this build before using it as the server default.');
                     const chosen = build.artifacts.filter(x => x.matches && (request.agentId == null || x.id === request.agentId) && (request.filename == null || x.filename === request.filename));
                     if (!chosen.length) throw new Error('No matching verified files in this build.');
                     const seen = new Set();
                     for (const artifact of chosen) { if (seen.has(artifact.id)) throw new Error('This build has more than one file for the same agent type. Choose one file per type.'); seen.add(artifact.id); }
-                    await fs.promises.mkdir(agentsDir, { recursive: true, mode: 0o700 });
-                    if (!(await fs.promises.lstat(agentsDir)).isDirectory()) throw new Error('Invalid agents directory');
+                    const records = [];
                     for (const artifact of chosen) {
                         const arch = parent.parent.meshAgentsArchitectureNumbers[artifact.id];
                         if (!arch || !arch.localname) throw new Error('Unknown agent type for this file.');
-                        const item = await catalog.getArtifact(build.id, artifact.id, artifact.filename, domain);
-                        const dest = path.join(agentsDir, arch.localname), tmp = path.join(agentsDir, '.' + crypto.randomBytes(16).toString('hex') + '.tmp');
-                        try { await fs.promises.writeFile(tmp, item.data, { flag: 'wx', mode: 0o600 }); await fs.promises.rename(tmp, dest); }
-                        catch (ex) { await fs.promises.unlink(tmp).catch(() => {}); throw ex; }
-                        state.entries[artifact.id] = { build: build.id, name: build.name, filename: artifact.filename, localname: arch.localname, appliedAt: new Date().toISOString(), appliedBy: user._id };
+                        await catalog.getArtifact(build.id, artifact.id, artifact.filename, domain);
+                        records.push({ _id: defaults.key(domain, artifact.id), type: 'agentbuilddefault', domain: domain.id, agentId: artifact.id,
+                            build: build.id, name: build.name, filename: artifact.filename, localname: arch.localname, appliedAt: new Date().toISOString(), appliedBy: user._id });
                     }
-                    await writeState(state);
-                    await new Promise(resolve => parent.parent.reloadMeshAgents(domain, resolve));
+                    try { for (const record of records) await storage.set(db, record); }
+                    finally { await defaults.reload(domain); }
                     parent.parent.DispatchEvent(['*', user._id], null, { etype: 'server', action: 'agentbuildcatalog', domain: domain.id, userid: user._id, username: user.name, msg: 'Set server default agent from build: ' + build.name });
                     return { changed: true };
                 }
-                // cleardefault: remove only the overrides this feature recorded for this build (optionally one agent type).
-                let cleared = 0;
-                for (const agentId of Object.keys(state.entries)) {
-                    const entry = state.entries[agentId];
-                    if (entry.build !== build.id || (request.agentId != null && Number(agentId) !== request.agentId)) continue;
-                    const arch = parent.parent.meshAgentsArchitectureNumbers[agentId];
-                    if (arch && arch.localname === entry.localname) await fs.promises.rm(path.join(agentsDir, entry.localname), { force: true });
-                    delete state.entries[agentId]; cleared++;
-                }
-                if (!cleared) throw new Error('This build is not set as the server default.');
-                await writeState(state);
-                await new Promise(resolve => parent.parent.reloadMeshAgents(domain, resolve));
-                parent.parent.DispatchEvent(['*', user._id], null, { etype: 'server', action: 'agentbuildcatalog', domain: domain.id, userid: user._id, username: user.name, msg: 'Cleared server default agent from build: ' + build.name });
+                const result = await clearServerDefault(domain, request.build, request.agentId);
+                if (!result.cleared) throw new Error('This build is not set as the server default.');
+                parent.parent.DispatchEvent(['*', user._id], null, { etype: 'server', action: 'agentbuildcatalog', domain: domain.id, userid: user._id, username: user.name, msg: 'Cleared server default agent from build: ' + (result.name || (build && build.name) || request.build) });
                 return { changed: true };
-            }, true);
+            }, true));
         }
         if (!['archive', 'restore', 'remove'].includes(request.op)) throw new Error('Invalid operation');
-        return catalog.use(domain, request.build, async function () {
+        return defaults.use(domain, () => catalog.use(domain, request.build, async function () {
             const build = (await catalog.getCatalog(domain)).builds.find(x => x.id === request.build);
             if (!build) throw new Error('Build is unavailable');
             if (await deployments.references(domain, build.id)) throw new Error('This build is referenced by a deployment. Complete or cancel that deployment first.');
-            if (request.op === 'remove' && await parent.agentBuildUsage.references(domain, build)) throw new Error('This build is still installed, pinned or awaiting deployment. Archive it instead.');
+            if (request.op === 'remove') {
+                if (await parent.agentBuildUsage.references(domain, build)) throw new Error('This build is still installed, pinned or awaiting deployment. Archive it instead.');
+                if (!build.managed) throw new Error('Bundled catalog entries can be archived but cannot be removed.');
+                if (request.confirmDefault !== true) {
+                    for await (const record of storage.records(db, 'agentbuilddefault', domain.id)) {
+                        if (record.build === build.id) throw new Error('This build supplies a server default. Confirm that removing it also clears its server defaults.');
+                    }
+                }
+                await clearServerDefault(domain, build.id);
+            }
             await catalog.manage(domain, build.id, request.op);
             parent.parent.DispatchEvent(['*', user._id], null, { etype: 'server', action: 'agentbuildcatalog', domain: domain.id, userid: user._id, username: user.name, msg: 'Agent build ' + request.op + ': ' + build.name });
             return { changed: true };
-        }, true);
+        }, true));
     }
     return { command, receive: uploads.receive };
 }
 
 module.exports = {
-    CreateAgentCatalog, CreateAgentBuilds, CreateAgentBuildAdmin, CreateAgentDefaults,
+    CreateAgentCatalog, CreateAgentBuilds, CreateAgentBuildAdmin, CreateAgentDefaults, CreateAgentBuildDefaultStore,
     CreateAgentBuildUpload, CreateAgentBuildImport, CreateAgentBuildUsage, CreateAgentDeployment,
     CreateAgentReleaseUpdates, storage, fetch, compatibility, binary, archive
 };
