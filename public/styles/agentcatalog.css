@@ -148,6 +148,7 @@
    keeps that page's current colour until it is reworked. */
 .agent-linkbutton, .agent-usage-link { background: none; border: 0; padding: 0; font: inherit; text-decoration: underline; cursor: pointer; color: var(--bs-link-color, #036); }
 .agent-linkbutton:disabled, .agent-usage-link:disabled { color: inherit; opacity: .6; text-decoration: none; cursor: default; }
+.agent-build-id { -webkit-user-select: text; user-select: text; }
 #p44 .agent-linkbutton, #p44 .agent-usage-link { color: inherit; }
 /* default and default-mobile have no Bootstrap and their #dialog is light in both themes, so the
    project link colour and a painted select beat the inherited ones. */

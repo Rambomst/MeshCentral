@@ -77,6 +77,17 @@ function agentManagerKey(event, action) { if (event.key !== 'Enter') return true
 function agentManagerControl(id, label, control, note) {
     return '<div class="agent-build-field"><label for="' + id + '">' + label + '</label><div>' + control + (note ? ('<div class="agent-build-note">' + note + '</div>') : '') + '</div></div>';
 }
+function agentManagerCopyBuildId(button) {
+    var code = button.previousElementSibling;
+    function copy() {
+        var range = document.createRange(), selection = window.getSelection();
+        range.selectNodeContents(code);
+        selection.removeAllRanges();
+        selection.addRange(range);
+        try { document.execCommand('copy'); } catch (ex) { }
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(code.textContent).catch(copy); } else { copy(); }
+}
 // One figure in the tally. A zero is dropped unless it is the subject of the dialog, which is what
 // always is for: an installed count of 0 is the answer, an unconfirmed count of 0 is noise.
 function agentManagerCount(label, value, level, always) { return (value || always) ? ('<span>' + label + ' <b class="' + level + '">' + value + '</b></span>') : ''; }
@@ -430,7 +441,8 @@ function agentManagerManageForm() {
             var meta = EscapeHtml(tags.join(', ')) + (art.agentHash ? ('<div class="agent-muted">' + "Update hash" + ' ' + EscapeHtml(art.agentHash.substring(0, 16)) + '...</div>') : '');
             fileRows += '<div class="agent-manager-row"><div><b>' + EscapeHtml(art.filename) + '</b></div><div>' + EscapeHtml(agentManagerAgentType(art.id)) + '</div><div class="agent-manager-detail">' + meta + '</div></div>';
         }
-        html = (build.uploadedAt ? ('<p class="agent-muted">' + "Added" + ' ' + EscapeHtml(printDateTime(new Date(build.uploadedAt))) + '</p>') : '') + fileRows + agentManagerControl('agentManageAction', "Action", options + '</select>') + '<div id="agentManageNote"></div>';
+        html = '<div class="agent-hash">' + "Build ID" + ' <code class="agent-build-id">' + EscapeHtml(build.id) + '</code> <button type="button" class="agent-linkbutton" onclick="agentManagerCopyBuildId(this)">' + "Copy build ID" + '</button></div>';
+        html += (build.uploadedAt ? ('<p class="agent-muted">' + "Added" + ' ' + EscapeHtml(printDateTime(new Date(build.uploadedAt))) + '</p>') : '') + fileRows + agentManagerControl('agentManageAction', "Action", options + '</select>') + '<div id="agentManageNote"></div>';
         if (isDefault && build.managed) html += '<div id="agentManageDefaultWarning" style="display:none"><p class="agent-warn">' + "This build supplies a server default. Removing it clears those selections. Devices following the default may update on reconnect." + '</p><label class="agent-manager-confirm"><input id="agentManageConfirmDefault" type="checkbox" onchange="agentManagerManageValidate()" /> ' + "I understand that removing this build also clears its server defaults." + '</label></div>';
         if (!build.managed) html += '<p class="agent-muted">' + "This build was not uploaded to this server, so it cannot be removed here." + '</p>';
         agentManagerHtml(html);

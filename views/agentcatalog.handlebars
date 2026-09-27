@@ -33,6 +33,7 @@
                 <details class="agent-build-body" data-agent-detail="build:{{id}}" data-agent-expand ontoggle="agentCatalogToggled(this)">
                     <summary class="agent-build-summary"><b class="agent-build-name" id="agentBuildName-{{id}}">{{name}}</b> <span class="agent-muted">{{channel}}</span> <span class="agent-muted" data-agent-count></span> <span class="agent-error" data-agent-alert></span></summary>
                     <details class="agent-provenance" data-agent-detail="source:{{id}}" ontoggle="agentCatalogToggled(this)"><summary>Source and verification</summary>
+                        <div class="agent-hash">Build ID <code class="agent-build-id">{{id}}</code><button type="button" class="agent-linkbutton" onclick="agentManagerCopyBuildId(this)">Copy build ID</button></div>
                         {{#if commit}}<div class="agent-source">Source commit: {{#if sourceUrl}}<a href="{{sourceUrl}}" target="_blank" rel="noopener noreferrer">{{commit}}</a>{{else}}{{commit}}{{/if}} {{#if commitTime}}<span data-agent-time="{{commitTime}}">{{commitTime}}</span>{{/if}}</div>{{/if}}
                         {{#if workflows}}<div class="agent-source">GitHub Actions: {{#each workflows}}<a href="{{url}}" title="{{id}}" target="_blank" rel="noopener noreferrer">{{name}}</a> {{/each}}</div>{{/if}}
                         {{#if provenance}}<div class="agent-source">Imported from {{provenance.kind}}: {{#if provenance.url}}<a href="{{provenance.url}}" target="_blank" rel="noopener noreferrer">{{provenance.repository}}{{#unless provenance.repository}}{{provenance.url}}{{/unless}}</a>{{/if}} {{provenance.tag}}</div>
@@ -45,7 +46,7 @@
                         <div role="rowgroup"><div role="row"><div role="columnheader">Agent file</div><div role="columnheader">Agent type</div><div role="columnheader">Requirements</div><div role="columnheader" class="agent-number">Size</div><div role="columnheader">Devices</div><div role="columnheader">Status</div></div></div>
                         <div role="rowgroup">
                         {{#each artifacts}}
-                            <div role="row" data-agent-row data-agent-file="{{filename}}" data-agent-hash="{{agentHash}}" data-agent-verify="{{#if matches}}match{{else}}error{{/if}}" data-agent-search="{{filename}} {{platform}} {{cpu}} {{id}} {{requirements}} {{status}} {{agentHash}}">
+                            <div role="row" data-agent-row data-agent-file="{{filename}}" data-agent-hash="{{agentHash}}" data-agent-verify="{{#if matches}}match{{else}}error{{/if}}" data-agent-search="{{../id}} {{filename}} {{platform}} {{cpu}} {{id}} {{requirements}} {{status}} {{agentHash}}">
                                 <div role="cell" class="agent-file"><span class="agent-cell-label">Agent file</span>{{filename}}</div>
                                 <div role="cell"><span class="agent-cell-label">Agent type</span>{{platform}} / {{cpu}} <span class="agent-muted">({{id}})</span></div>
                                 <div role="cell"><span class="agent-cell-label">Requirements</span>{{#if requirements}}{{requirements}}{{else}}<span class="agent-muted">None recorded</span>{{/if}}</div>
