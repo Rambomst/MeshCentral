@@ -60,6 +60,7 @@
 #p44 [role="columnheader"] { font-weight: bold; background: var(--bs-tertiary-bg, #8882); }
 #p44 .agent-number { text-align: right; white-space: nowrap; }
 #p44 .agent-file { overflow-wrap: anywhere; }
+#p44 .agent-file-tools { font-size: .9em; font-weight: normal; }
 #p44 .agent-cell-label { display: none; }
 #p44 .agent-usage > div { font-size: .9em; }
 #p44 .agent-hash { max-width: 340px; overflow-wrap: anywhere; font-size: 12px; margin: 4px 0; }

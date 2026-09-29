@@ -1434,13 +1434,13 @@
     {
       "en": ". Agent type and desktop support were declared by the uploader.",
       "xloc": [
-        "agentcatalog.handlebars->agentCatalogContent->7->1->1->3->14"
+        "agentcatalog.handlebars->agentCatalogContent->7->1->1->3->16"
       ]
     },
     {
       "en": ". Import this release to review and test its files.",
       "xloc": [
-        "agentcatalog.handlebars->agentCatalogContent->p44state->5"
+        "agentcatalog.handlebars->agentCatalogContent->p44state->3"
       ]
     },
     {
@@ -4459,7 +4459,7 @@
     {
       "en": "A failure pauses the deployment. Offline devices are skipped when an agent file has to be installed.",
       "xloc": [
-        "agentbuildmanager.js->0->171"
+        "agentbuildmanager.js->0->200"
       ]
     },
     {
@@ -4929,7 +4929,7 @@
     {
       "en": "About default downloads",
       "xloc": [
-        "agentbuildmanager.js->0->71"
+        "agentbuildmanager.js->0->72"
       ]
     },
     {
@@ -5772,7 +5772,7 @@
       "zh-chs": "操作",
       "zh-cht": "指令",
       "xloc": [
-        "agentbuildmanager.js->0->130",
+        "agentbuildmanager.js->0->152",
         "default-mobile.handlebars->55->1014",
         "default.handlebars->121->1965",
         "default.handlebars->container->column_l->p42->p42tbl->1->0->8",
@@ -7021,7 +7021,7 @@
     {
       "en": "Add build",
       "xloc": [
-        "agentbuildmanager.js->0->120"
+        "agentbuildmanager.js->0->126"
       ]
     },
     {
@@ -7149,7 +7149,8 @@
     {
       "en": "Added",
       "xloc": [
-        "agentcatalog.handlebars->agentCatalogContent->7->1->1->3->14"
+        "agentbuildmanager.js->0->151",
+        "agentcatalog.handlebars->agentCatalogContent->7->1->1->3->16"
       ]
     },
     {
@@ -7489,7 +7490,7 @@
     {
       "en": "Adding build...",
       "xloc": [
-        "agentbuildmanager.js->0->121"
+        "agentbuildmanager.js->0->127"
       ]
     },
     {
@@ -8455,14 +8456,14 @@
     {
       "en": "Agent deployment",
       "xloc": [
-        "agentbuildmanager.js->0->41"
+        "agentbuildmanager.js->0->42"
       ]
     },
     {
       "en": "Agent deployments",
       "xloc": [
-        "agentbuildmanager.js->0->185",
-        "agentbuildmanager.js->0->42"
+        "agentbuildmanager.js->0->214",
+        "agentbuildmanager.js->0->43"
       ]
     },
     {
@@ -8496,6 +8497,12 @@
       ]
     },
     {
+      "en": "Agent downloads will serve this build's files immediately. Devices following the default may update on reconnect.",
+      "xloc": [
+        "agentbuildmanager.js->0->159"
+      ]
+    },
+    {
       "en": "Agent file",
       "xloc": [
         "agentcatalog.handlebars->agentCatalogContent->5->5->1->0->0",
@@ -8512,7 +8519,7 @@
     {
       "en": "Agent files",
       "xloc": [
-        "agentbuildmanager.js->0->80"
+        "agentbuildmanager.js->0->82"
       ]
     },
     {
@@ -9009,19 +9016,19 @@
     {
       "en": "All devices",
       "xloc": [
-        "agentbuildmanager.js->0->195"
+        "agentbuildmanager.js->0->224"
       ]
     },
     {
       "en": "All references",
       "xloc": [
-        "agentbuildmanager.js->0->141"
+        "agentbuildmanager.js->0->170"
       ]
     },
     {
       "en": "All release files are present.",
       "xloc": [
-        "agentbuildmanager.js->0->52"
+        "agentbuildmanager.js->0->53"
       ]
     },
     {
@@ -9744,7 +9751,7 @@
     {
       "en": "Another administrator created this deployment. You can pause or cancel it, but only its owner can start or resume it.",
       "xloc": [
-        "agentbuildmanager.js->0->210"
+        "agentbuildmanager.js->0->239"
       ]
     },
     {
@@ -10069,6 +10076,12 @@
         "default-mobile.handlebars->55->1239",
         "default.handlebars->121->3709",
         "default3.handlebars->123->3705"
+      ]
+    },
+    {
+      "en": "Apply the server agent branding and re-sign",
+      "xloc": [
+        "agentbuildmanager.js->0->116"
       ]
     },
     {
@@ -10698,19 +10711,19 @@
     {
       "en": "Archive build",
       "xloc": [
-        "agentbuildmanager.js->0->137"
+        "agentbuildmanager.js->0->166"
       ]
     },
     {
       "en": "Archive this build",
       "xloc": [
-        "agentbuildmanager.js->0->128"
+        "agentbuildmanager.js->0->138"
       ]
     },
     {
       "en": "Archived",
       "xloc": [
-        "agentbuildmanager.js->0->125",
+        "agentbuildmanager.js->0->134",
         "agentcatalog.handlebars->agentCatalogContent->7->1->3->1"
       ]
     },
@@ -10725,7 +10738,7 @@
     {
       "en": "Archiving hides this build from new selections. Devices already pinned to it keep running it and the server keeps its stored copies.",
       "xloc": [
-        "agentbuildmanager.js->0->132"
+        "agentbuildmanager.js->0->156"
       ]
     },
     {
@@ -11884,7 +11897,7 @@
     {
       "en": "Automatic downloads are disabled. Local files and matching uploaded builds can still be used.",
       "xloc": [
-        "agentbuildmanager.js->0->68"
+        "agentbuildmanager.js->0->69"
       ]
     },
     {
@@ -12137,7 +12150,7 @@
     {
       "en": "Back to builds",
       "xloc": [
-        "agentbuildmanager.js->0->257"
+        "agentbuildmanager.js->0->288"
       ]
     },
     {
@@ -12679,7 +12692,7 @@
     {
       "en": "Batch size",
       "xloc": [
-        "agentbuildmanager.js->0->169"
+        "agentbuildmanager.js->0->198"
       ]
     },
     {
@@ -12773,7 +12786,7 @@
     {
       "en": "Being deployed",
       "xloc": [
-        "agentbuildmanager.js->0->151"
+        "agentbuildmanager.js->0->180"
       ]
     },
     {
@@ -12964,8 +12977,14 @@
     {
       "en": "Branch or commit",
       "xloc": [
-        "agentbuildmanager.js->0->240",
-        "agentbuildmanager.js->0->252"
+        "agentbuildmanager.js->0->271",
+        "agentbuildmanager.js->0->283"
+      ]
+    },
+    {
+      "en": "Branding",
+      "xloc": [
+        "agentbuildmanager.js->0->115"
       ]
     },
     {
@@ -13194,10 +13213,17 @@
     {
       "en": "Build",
       "xloc": [
-        "agentbuildmanager.js->0->167",
+        "agentbuildmanager.js->0->196",
         "default-mobile.handlebars->55->1145",
         "default.handlebars->121->3615",
         "default3.handlebars->123->3611"
+      ]
+    },
+    {
+      "en": "Build ID",
+      "xloc": [
+        "agentbuildmanager.js->0->149",
+        "agentcatalog.handlebars->agentCatalogContent->7->1->1->3->2"
       ]
     },
     {
@@ -13240,13 +13266,6 @@
       ]
     },
     {
-      "en": "Build ID",
-      "xloc": [
-        "agentbuildmanager.js->0->147",
-        "agentcatalog.handlebars->agentCatalogContent->7->1->1->3->2"
-      ]
-    },
-    {
       "en": "Build installed and verified",
       "xloc": [
         "default-mobile.handlebars->55->1169",
@@ -13257,20 +13276,20 @@
     {
       "en": "Build name",
       "xloc": [
-        "agentbuildmanager.js->0->100"
+        "agentbuildmanager.js->0->102"
       ]
     },
     {
       "en": "Build usage",
       "xloc": [
-        "agentbuildmanager.js->0->138",
+        "agentbuildmanager.js->0->167",
         "agentbuildmanager.js->0->38"
       ]
     },
     {
       "en": "Builds",
       "xloc": [
-        "agentbuildmanager.js->0->235"
+        "agentbuildmanager.js->0->266"
       ]
     },
     {
@@ -14162,14 +14181,14 @@
     {
       "en": "Cancel remaining",
       "xloc": [
-        "agentbuildmanager.js->0->213"
+        "agentbuildmanager.js->0->242"
       ]
     },
     {
       "en": "Cancelled",
       "xloc": [
         "agentbuildmanager.js->0->12",
-        "agentbuildmanager.js->0->209"
+        "agentbuildmanager.js->0->238"
       ]
     },
     {
@@ -15383,7 +15402,7 @@
     {
       "en": "Check for releases",
       "xloc": [
-        "agentbuildmanager.js->0->55"
+        "agentbuildmanager.js->0->56"
       ]
     },
     {
@@ -15478,19 +15497,19 @@
     {
       "en": "Checking devices...",
       "xloc": [
-        "agentbuildmanager.js->0->183"
+        "agentbuildmanager.js->0->212"
       ]
     },
     {
       "en": "Checking for releases does not change the server defaults or install agents.",
       "xloc": [
-        "agentbuildmanager.js->0->56"
+        "agentbuildmanager.js->0->57"
       ]
     },
     {
       "en": "Checking for releases...",
       "xloc": [
-        "agentbuildmanager.js->0->54"
+        "agentbuildmanager.js->0->55"
       ]
     },
     {
@@ -16109,6 +16128,14 @@
       ]
     },
     {
+      "en": "Clear default",
+      "xloc": [
+        "agentbuildmanager.js->0->130",
+        "agentbuildmanager.js->0->165",
+        "agentcatalog.handlebars->agentCatalogContent->5->5->3->1->7->8"
+      ]
+    },
+    {
       "bs": "Obriši filter za pretragu",
       "ca": "Esborra el filtre de cerca",
       "cs": "Vymazat vyhledávací filtr",
@@ -16137,6 +16164,13 @@
         "default-mobile.handlebars->55->395",
         "default.handlebars->121->386",
         "default3.handlebars->123->384"
+      ]
+    },
+    {
+      "en": "Clear server default",
+      "xloc": [
+        "agentbuildmanager.js->0->128",
+        "agentbuildmanager.js->0->40"
       ]
     },
     {
@@ -16207,6 +16241,12 @@
         "default-mobile.handlebars->55->84",
         "default.handlebars->121->241",
         "default3.handlebars->123->238"
+      ]
+    },
+    {
+      "en": "Clear the server default from this build",
+      "xloc": [
+        "agentbuildmanager.js->0->140"
       ]
     },
     {
@@ -16842,14 +16882,14 @@
       "zh-cht": "關",
       "xloc": [
         "agent-translations.json",
-        "agentbuildmanager.js->0->123",
-        "agentbuildmanager.js->0->148",
-        "agentbuildmanager.js->0->184",
-        "agentbuildmanager.js->0->223",
-        "agentbuildmanager.js->0->43",
-        "agentbuildmanager.js->0->45",
+        "agentbuildmanager.js->0->132",
+        "agentbuildmanager.js->0->177",
+        "agentbuildmanager.js->0->213",
+        "agentbuildmanager.js->0->254",
+        "agentbuildmanager.js->0->44",
         "agentbuildmanager.js->0->46",
-        "agentbuildmanager.js->0->76",
+        "agentbuildmanager.js->0->47",
+        "agentbuildmanager.js->0->78",
         "default-mobile.handlebars->55->1159",
         "default-mobile.handlebars->55->1160",
         "default-mobile.handlebars->55->1240",
@@ -16942,7 +16982,7 @@
     {
       "en": "Closing this dialog does not stop this deployment. Pause or cancel stops new work. Policies already applied stay in place.",
       "xloc": [
-        "agentbuildmanager.js->0->218"
+        "agentbuildmanager.js->0->249"
       ]
     },
     {
@@ -16973,6 +17013,25 @@
       "xloc": [
         "default.handlebars->121->342",
         "default3.handlebars->123->339"
+      ]
+    },
+    {
+      "en": "Code signing",
+      "xloc": [
+        "agentbuildmanager.js->0->113"
+      ]
+    },
+    {
+      "en": "Code-sign this file with the server certificate",
+      "xloc": [
+        "agentbuildmanager.js->0->114"
+      ]
+    },
+    {
+      "en": "Code-signed by the server",
+      "xloc": [
+        "agentbuildmanager.js->0->145",
+        "agentcatalog.handlebars->agentCatalogContent->7->1->1->5->3->1->11->3->8"
       ]
     },
     {
@@ -17384,13 +17443,13 @@
     {
       "en": "Configure a GitHub token on the server to download these files.",
       "xloc": [
-        "agentbuildmanager.js->0->262"
+        "agentbuildmanager.js->0->293"
       ]
     },
     {
       "en": "Configure a GitHub token on the server to download workflow artifacts.",
       "xloc": [
-        "agentbuildmanager.js->0->277"
+        "agentbuildmanager.js->0->308"
       ]
     },
     {
@@ -17661,7 +17720,7 @@
     {
       "en": "Confirm local recovery before starting this deployment.",
       "xloc": [
-        "agentbuildmanager.js->0->220"
+        "agentbuildmanager.js->0->251"
       ]
     },
     {
@@ -18275,9 +18334,15 @@
       ]
     },
     {
+      "en": "Confirm that removing this build also clears its server defaults.",
+      "xloc": [
+        "agentbuildmanager.js->0->161"
+      ]
+    },
+    {
       "en": "Confirm that you trust these agent files.",
       "xloc": [
-        "agentbuildmanager.js->0->119"
+        "agentbuildmanager.js->0->125"
       ]
     },
     {
@@ -19381,13 +19446,6 @@
       ]
     },
     {
-      "en": "Copy build ID",
-      "xloc": [
-        "agentbuildmanager.js->0->148",
-        "agentcatalog.handlebars->agentCatalogContent->7->1->1->3->2->2"
-      ]
-    },
-    {
       "bs": "Kopirajte MAC adresu u međuspremnik",
       "ca": "Copia l'adreça MAC al porta-retalls",
       "cs": "Kopírovat MAC adresu do schránky",
@@ -19600,6 +19658,13 @@
         "default.handlebars->121->712",
         "default3.handlebars->123->708",
         "default3.handlebars->123->710"
+      ]
+    },
+    {
+      "en": "Copy build ID",
+      "xloc": [
+        "agentbuildmanager.js->0->150",
+        "agentcatalog.handlebars->agentCatalogContent->7->1->1->3->2->2"
       ]
     },
     {
@@ -21086,7 +21151,7 @@
     {
       "en": "Current server default",
       "xloc": [
-        "agentbuildmanager.js->0->139"
+        "agentbuildmanager.js->0->168"
       ]
     },
     {
@@ -21787,7 +21852,7 @@
       "en": "Default agent downloads",
       "xloc": [
         "agentbuildmanager.js->0->35",
-        "agentbuildmanager.js->0->66"
+        "agentbuildmanager.js->0->67"
       ]
     },
     {
@@ -21796,12 +21861,6 @@
         "default-mobile.handlebars->container->page_content->column_l->p44->p44info->p44head->1->0->0",
         "default.handlebars->container->column_l->p44->p44info->p44head->3->0->0",
         "default3.handlebars->container->column_l->p44->p44info->p44head->3->0->0"
-      ]
-    },
-    {
-      "en": "Default files are ready. Restart MeshCentral to load them.",
-      "xloc": [
-        "agentcatalog.handlebars->agentCatalogContent->p44state->1"
       ]
     },
     {
@@ -22778,8 +22837,8 @@
     {
       "en": "Deploy agent build",
       "xloc": [
-        "agentbuildmanager.js->0->158",
-        "agentbuildmanager.js->0->40",
+        "agentbuildmanager.js->0->187",
+        "agentbuildmanager.js->0->41",
         "default-mobile.handlebars->55->572",
         "default.handlebars->121->775",
         "default3.handlebars->123->773"
@@ -23513,7 +23572,7 @@
     {
       "en": "Desktop support",
       "xloc": [
-        "agentbuildmanager.js->0->107"
+        "agentbuildmanager.js->0->109"
       ]
     },
     {
@@ -25649,7 +25708,7 @@
     {
       "en": "Devices that are not agent managed, that have agent updates unavailable, or where you do not hold full rights are left out.",
       "xloc": [
-        "agentbuildmanager.js->0->163"
+        "agentbuildmanager.js->0->192"
       ]
     },
     {
@@ -25966,7 +26025,8 @@
     {
       "en": "Discard this deployment",
       "xloc": [
-        "agentbuildmanager.js->0->212"
+        "agentbuildmanager.js->0->241",
+        "agentbuildmanager.js->0->243"
       ]
     },
     {
@@ -26896,6 +26956,9 @@
       "zh-chs": "下载",
       "zh-cht": "下載",
       "xloc": [
+        "agentbuildmanager.js->0->148",
+        "agentcatalog.handlebars->agentCatalogContent->5->5->3->1->1->2->0",
+        "agentcatalog.handlebars->agentCatalogContent->7->1->1->5->3->1->1->2->0",
         "default.handlebars->container->column_l->p13->p13toolbar->1->2->1->3",
         "default.handlebars->container->column_l->p5->p5toolbar->1->0->p5filehead->3",
         "default.handlebars->container->column_l->p9->p9toolbar->1->p9toolbar2->1->3",
@@ -27160,13 +27223,13 @@
     {
       "en": "Download SHA256 verified",
       "xloc": [
-        "agentbuildmanager.js->0->290"
+        "agentbuildmanager.js->0->321"
       ]
     },
     {
       "en": "Download URL",
       "xloc": [
-        "agentbuildmanager.js->0->229"
+        "agentbuildmanager.js->0->260"
       ]
     },
     {
@@ -27202,20 +27265,20 @@
     {
       "en": "Download agent files from GitHub or a public HTTPS address and review them before they enter the catalog.",
       "xloc": [
-        "agentbuildmanager.js->0->227"
+        "agentbuildmanager.js->0->258"
       ]
     },
     {
       "en": "Download an agent file or a ZIP from a public HTTPS address. Up to 128 MiB downloaded and unpacked, 16 agent files, 64 MiB per file.",
       "xloc": [
-        "agentbuildmanager.js->0->233"
+        "agentbuildmanager.js->0->264"
       ]
     },
     {
       "en": "Download and review",
       "xloc": [
-        "agentbuildmanager.js->0->248",
-        "agentbuildmanager.js->0->278"
+        "agentbuildmanager.js->0->279",
+        "agentbuildmanager.js->0->309"
       ]
     },
     {
@@ -27741,13 +27804,13 @@
     {
       "en": "Downloading {0} ({1} of {2})",
       "xloc": [
-        "agentbuildmanager.js->0->287"
+        "agentbuildmanager.js->0->318"
       ]
     },
     {
       "en": "Downloading...",
       "xloc": [
-        "agentbuildmanager.js->0->281"
+        "agentbuildmanager.js->0->312"
       ]
     },
     {
@@ -28342,7 +28405,7 @@
     {
       "en": "Each batch must finish verification before the next starts.",
       "xloc": [
-        "agentbuildmanager.js->0->170"
+        "agentbuildmanager.js->0->199"
       ]
     },
     {
@@ -30984,7 +31047,7 @@
     {
       "en": "Enter a build name.",
       "xloc": [
-        "agentbuildmanager.js->0->118"
+        "agentbuildmanager.js->0->124"
       ]
     },
     {
@@ -31139,7 +31202,7 @@
     {
       "en": "Enter the HTTPS address of the agent file or ZIP to download.",
       "xloc": [
-        "agentbuildmanager.js->0->249"
+        "agentbuildmanager.js->0->280"
       ]
     },
     {
@@ -31871,7 +31934,7 @@
     {
       "en": "Expected SHA256 (optional)",
       "xloc": [
-        "agentbuildmanager.js->0->232"
+        "agentbuildmanager.js->0->263"
       ]
     },
     {
@@ -32902,7 +32965,7 @@
     {
       "en": "File checks compare local bytes with the manifest. They do not test an agent on a device.",
       "xloc": [
-        "agentcatalog.handlebars->agentCatalogContent->7->1->1->3->16"
+        "agentcatalog.handlebars->agentCatalogContent->7->1->1->3->18"
       ]
     },
     {
@@ -32953,7 +33016,7 @@
     {
       "en": "Filename (optional)",
       "xloc": [
-        "agentbuildmanager.js->0->231"
+        "agentbuildmanager.js->0->262"
       ]
     },
     {
@@ -33087,31 +33150,25 @@
     {
       "en": "Files are inspected before you can add this build. Closing this dialog cancels the import.",
       "xloc": [
-        "agentbuildmanager.js->0->280"
-      ]
-    },
-    {
-      "en": "Files are ready. Restart MeshCentral to load the restored defaults.",
-      "xloc": [
-        "agentbuildmanager.js->0->48"
+        "agentbuildmanager.js->0->311"
       ]
     },
     {
       "en": "Files selected: {0}",
       "xloc": [
-        "agentbuildmanager.js->0->88"
+        "agentbuildmanager.js->0->90"
       ]
     },
     {
       "en": "Files skipped in the archive: {0}",
       "xloc": [
-        "agentbuildmanager.js->0->104"
+        "agentbuildmanager.js->0->106"
       ]
     },
     {
       "en": "Files that cannot be added: {0}",
       "xloc": [
-        "agentbuildmanager.js->0->102"
+        "agentbuildmanager.js->0->104"
       ]
     },
     {
@@ -33172,8 +33229,8 @@
     {
       "en": "Filter devices",
       "xloc": [
-        "agentbuildmanager.js->0->144",
-        "agentbuildmanager.js->0->145"
+        "agentbuildmanager.js->0->173",
+        "agentbuildmanager.js->0->174"
       ]
     },
     {
@@ -33277,10 +33334,10 @@
     {
       "en": "Find builds",
       "xloc": [
-        "agentbuildmanager.js->0->246",
-        "agentbuildmanager.js->0->247",
-        "agentbuildmanager.js->0->253",
-        "agentbuildmanager.js->0->267"
+        "agentbuildmanager.js->0->277",
+        "agentbuildmanager.js->0->278",
+        "agentbuildmanager.js->0->284",
+        "agentbuildmanager.js->0->298"
       ]
     },
     {
@@ -35680,19 +35737,19 @@
     {
       "en": "GitHub Actions: {{#each workflows}}",
       "xloc": [
-        "agentcatalog.handlebars->agentCatalogContent->7->1->1->3->4"
+        "agentcatalog.handlebars->agentCatalogContent->7->1->1->3->6"
       ]
     },
     {
       "en": "GitHub settings",
       "xloc": [
-        "agentbuildmanager.js->0->243"
+        "agentbuildmanager.js->0->274"
       ]
     },
     {
       "en": "GitHub token configured on the server.",
       "xloc": [
-        "agentbuildmanager.js->0->241"
+        "agentbuildmanager.js->0->272"
       ]
     },
     {
@@ -36991,7 +37048,7 @@
     {
       "en": "HTTPS URL",
       "xloc": [
-        "agentbuildmanager.js->0->230"
+        "agentbuildmanager.js->0->261"
       ]
     },
     {
@@ -37328,13 +37385,13 @@
     {
       "en": "Hashes",
       "xloc": [
-        "agentbuildmanager.js->0->111"
+        "agentbuildmanager.js->0->117"
       ]
     },
     {
       "en": "Headers identify the platform. Agent type and desktop support must match how these files were built. Publisher trust and runtime behavior have not been verified.",
       "xloc": [
-        "agentbuildmanager.js->0->113"
+        "agentbuildmanager.js->0->119"
       ]
     },
     {
@@ -38256,7 +38313,7 @@
     {
       "en": "I can recover these devices locally and accept interruption of active sessions.",
       "xloc": [
-        "agentbuildmanager.js->0->202"
+        "agentbuildmanager.js->0->231"
       ]
     },
     {
@@ -38270,7 +38327,13 @@
     {
       "en": "I trust these MeshAgent files and have checked the selected agent types.",
       "xloc": [
-        "agentbuildmanager.js->0->114"
+        "agentbuildmanager.js->0->120"
+      ]
+    },
+    {
+      "en": "I understand that removing this build also clears its server defaults.",
+      "xloc": [
+        "agentbuildmanager.js->0->154"
       ]
     },
     {
@@ -39374,8 +39437,8 @@
     {
       "en": "Import agent build",
       "xloc": [
-        "agentbuildmanager.js->0->226",
-        "agentbuildmanager.js->0->256",
+        "agentbuildmanager.js->0->257",
+        "agentbuildmanager.js->0->287",
         "agentbuildmanager.js->0->36"
       ]
     },
@@ -39420,19 +39483,19 @@
     {
       "en": "Import stopped.",
       "xloc": [
-        "agentbuildmanager.js->0->282"
+        "agentbuildmanager.js->0->313"
       ]
     },
     {
       "en": "Import this release to review its files and test it on selected devices.",
       "xloc": [
-        "agentbuildmanager.js->0->60"
+        "agentbuildmanager.js->0->61"
       ]
     },
     {
       "en": "Imported from {{provenance.kind}}: {{#if provenance.url}}",
       "xloc": [
-        "agentcatalog.handlebars->agentCatalogContent->7->1->1->3->6"
+        "agentcatalog.handlebars->agentCatalogContent->7->1->1->3->8"
       ]
     },
     {
@@ -39479,8 +39542,8 @@
     {
       "en": "In progress",
       "xloc": [
-        "agentbuildmanager.js->0->197",
-        "agentbuildmanager.js->0->205"
+        "agentbuildmanager.js->0->226",
+        "agentbuildmanager.js->0->234"
       ]
     },
     {
@@ -39546,7 +39609,7 @@
     {
       "en": "Include at least one agent file.",
       "xloc": [
-        "agentbuildmanager.js->0->117"
+        "agentbuildmanager.js->0->123"
       ]
     },
     {
@@ -39582,13 +39645,13 @@
     {
       "en": "Include devices whose requirements cannot be fully checked.",
       "xloc": [
-        "agentbuildmanager.js->0->168"
+        "agentbuildmanager.js->0->197"
       ]
     },
     {
       "en": "Included",
       "xloc": [
-        "agentbuildmanager.js->0->109"
+        "agentbuildmanager.js->0->111"
       ]
     },
     {
@@ -39924,8 +39987,8 @@
     {
       "en": "Inspecting files...",
       "xloc": [
-        "agentbuildmanager.js->0->286",
-        "agentbuildmanager.js->0->92"
+        "agentbuildmanager.js->0->317",
+        "agentbuildmanager.js->0->94"
       ]
     },
     {
@@ -40142,7 +40205,7 @@
     {
       "en": "Installed counts use the last agent file hash reported by each device, including offline devices. A device that has not reported a hash is not counted as installed.",
       "xloc": [
-        "agentbuildmanager.js->0->147"
+        "agentbuildmanager.js->0->176"
       ]
     },
     {
@@ -45397,7 +45460,7 @@
     {
       "en": "Last successful check",
       "xloc": [
-        "agentbuildmanager.js->0->63"
+        "agentbuildmanager.js->0->64"
       ]
     },
     {
@@ -45493,7 +45556,7 @@
     {
       "en": "Latest stable release",
       "xloc": [
-        "agentbuildmanager.js->0->59"
+        "agentbuildmanager.js->0->60"
       ]
     },
     {
@@ -45937,7 +46000,7 @@
     {
       "en": "Left out",
       "xloc": [
-        "agentbuildmanager.js->0->161"
+        "agentbuildmanager.js->0->190"
       ]
     },
     {
@@ -47256,7 +47319,7 @@
     {
       "en": "Loading GitHub builds...",
       "xloc": [
-        "agentbuildmanager.js->0->255"
+        "agentbuildmanager.js->0->286"
       ]
     },
     {
@@ -47290,6 +47353,12 @@
       ]
     },
     {
+      "en": "Loading files...",
+      "xloc": [
+        "agentbuildmanager.js->0->76"
+      ]
+    },
+    {
       "en": "Loading installed software...",
       "bs": "Učitavanje instaliranog softvera...",
       "ca": "Carregant programari instal·lat...",
@@ -47317,6 +47386,12 @@
       "xloc": [
         "default.handlebars->121->1901",
         "default3.handlebars->123->1898"
+      ]
+    },
+    {
+      "en": "Loading new default agent files. Refresh to see the updated defaults.",
+      "xloc": [
+        "agentcatalog.handlebars->agentCatalogContent->p44state->1"
       ]
     },
     {
@@ -47454,6 +47529,12 @@
       ]
     },
     {
+      "en": "Loading the new files. Agent downloads switch over when this finishes.",
+      "xloc": [
+        "agentbuildmanager.js->0->49"
+      ]
+    },
+    {
       "bs": "Učitavanje...",
       "ca": "Carregant...",
       "cs": "Načítání…",
@@ -47479,10 +47560,10 @@
       "zh-chs": "载入中...",
       "zh-cht": "載入中...",
       "xloc": [
-        "agentbuildmanager.js->0->224",
-        "agentbuildmanager.js->0->254",
-        "agentbuildmanager.js->0->44",
-        "agentbuildmanager.js->0->65",
+        "agentbuildmanager.js->0->255",
+        "agentbuildmanager.js->0->285",
+        "agentbuildmanager.js->0->45",
+        "agentbuildmanager.js->0->66",
         "default-mobile.handlebars->55->106",
         "default-mobile.handlebars->55->1163",
         "default-mobile.handlebars->55->1269",
@@ -50043,7 +50124,7 @@
     {
       "en": "Manage shared defaults from the default server domain.",
       "xloc": [
-        "agentbuildmanager.js->0->69"
+        "agentbuildmanager.js->0->70"
       ]
     },
     {
@@ -50864,7 +50945,7 @@
     {
       "en": "MeshAgent type",
       "xloc": [
-        "agentbuildmanager.js->0->106"
+        "agentbuildmanager.js->0->108"
       ]
     },
     {
@@ -53661,14 +53742,14 @@
       "en": "Needs attention",
       "xloc": [
         "agentbuildmanager.js->0->18",
-        "agentbuildmanager.js->0->196",
-        "agentbuildmanager.js->0->207"
+        "agentbuildmanager.js->0->225",
+        "agentbuildmanager.js->0->236"
       ]
     },
     {
       "en": "Needs attention: {0}",
       "xloc": [
-        "agentbuildmanager.js->0->191"
+        "agentbuildmanager.js->0->220"
       ]
     },
     {
@@ -54456,7 +54537,7 @@
     {
       "en": "Next",
       "xloc": [
-        "agentbuildmanager.js->0->266",
+        "agentbuildmanager.js->0->297",
         "agentbuildmanager.js->0->6"
       ]
     },
@@ -54858,7 +54939,7 @@
     {
       "en": "No GitHub token is configured. Public builds can be browsed, Actions downloads need a server token.",
       "xloc": [
-        "agentbuildmanager.js->0->242"
+        "agentbuildmanager.js->0->273"
       ]
     },
     {
@@ -55670,13 +55751,13 @@
     {
       "en": "No agent file hash reported",
       "xloc": [
-        "agentbuildmanager.js->0->155"
+        "agentbuildmanager.js->0->184"
       ]
     },
     {
       "en": "No agent file is available for this build.",
       "xloc": [
-        "agentbuildmanager.js->0->258"
+        "agentbuildmanager.js->0->289"
       ]
     },
     {
@@ -55760,7 +55841,7 @@
     {
       "en": "No build is available to pin. Upload or import a build first.",
       "xloc": [
-        "agentbuildmanager.js->0->179"
+        "agentbuildmanager.js->0->208"
       ]
     },
     {
@@ -55798,13 +55879,13 @@
     {
       "en": "No default release versions are configured. Configure a release manifest or supply local files.",
       "xloc": [
-        "agentbuildmanager.js->0->49"
+        "agentbuildmanager.js->0->50"
       ]
     },
     {
       "en": "No deployment has been created.",
       "xloc": [
-        "agentbuildmanager.js->0->193"
+        "agentbuildmanager.js->0->222"
       ]
     },
     {
@@ -55905,25 +55986,25 @@
     {
       "en": "No device has been checked yet.",
       "xloc": [
-        "agentbuildmanager.js->0->216"
+        "agentbuildmanager.js->0->247"
       ]
     },
     {
       "en": "No device is in this state.",
       "xloc": [
-        "agentbuildmanager.js->0->215"
+        "agentbuildmanager.js->0->246"
       ]
     },
     {
       "en": "No device matches this filter.",
       "xloc": [
-        "agentbuildmanager.js->0->156"
+        "agentbuildmanager.js->0->185"
       ]
     },
     {
       "en": "No device references this agent file.",
       "xloc": [
-        "agentbuildmanager.js->0->157"
+        "agentbuildmanager.js->0->186"
       ]
     },
     {
@@ -56204,7 +56285,7 @@
     {
       "en": "No expected digest supplied",
       "xloc": [
-        "agentbuildmanager.js->0->291"
+        "agentbuildmanager.js->0->322"
       ]
     },
     {
@@ -56741,6 +56822,12 @@
       ]
     },
     {
+      "en": "No remote desktop support",
+      "xloc": [
+        "agentbuildmanager.js->0->143"
+      ]
+    },
+    {
       "bs": "Nema serverskih prava",
       "ca": "Sense drets de servidor",
       "cs": "Žádná práva k serveru",
@@ -56773,7 +56860,7 @@
     {
       "en": "No stable release with an agent manifest was found.",
       "xloc": [
-        "agentbuildmanager.js->0->61"
+        "agentbuildmanager.js->0->62"
       ]
     },
     {
@@ -56839,7 +56926,7 @@
     {
       "en": "No successful run with matching, unexpired agent artifacts on this page.",
       "xloc": [
-        "agentbuildmanager.js->0->260"
+        "agentbuildmanager.js->0->291"
       ]
     },
     {
@@ -57002,7 +57089,7 @@
     {
       "en": "No verified file in this build matches these agent types, so those devices are left out",
       "xloc": [
-        "agentbuildmanager.js->0->177"
+        "agentbuildmanager.js->0->206"
       ]
     },
     {
@@ -57251,7 +57338,7 @@
     {
       "en": "None of the selected devices can be deployed to.",
       "xloc": [
-        "agentbuildmanager.js->0->178"
+        "agentbuildmanager.js->0->207"
       ]
     },
     {
@@ -57545,7 +57632,7 @@
     {
       "en": "Not added",
       "xloc": [
-        "agentbuildmanager.js->0->103"
+        "agentbuildmanager.js->0->105"
       ]
     },
     {
@@ -57582,7 +57669,7 @@
       "en": "Not checked",
       "xloc": [
         "agentbuildmanager.js->0->34",
-        "agentbuildmanager.js->0->62",
+        "agentbuildmanager.js->0->63",
         "default-mobile.handlebars->55->1230",
         "default.handlebars->121->3700",
         "default3.handlebars->123->3696"
@@ -57599,19 +57686,19 @@
     {
       "en": "Not confirmed",
       "xloc": [
-        "agentbuildmanager.js->0->152"
+        "agentbuildmanager.js->0->181"
       ]
     },
     {
       "en": "Not included",
       "xloc": [
-        "agentbuildmanager.js->0->110"
+        "agentbuildmanager.js->0->112"
       ]
     },
     {
       "en": "Not loaded in this session",
       "xloc": [
-        "agentbuildmanager.js->0->162"
+        "agentbuildmanager.js->0->191"
       ]
     },
     {
@@ -57679,8 +57766,8 @@
     {
       "en": "Not started",
       "xloc": [
-        "agentbuildmanager.js->0->199",
-        "agentbuildmanager.js->0->206"
+        "agentbuildmanager.js->0->228",
+        "agentbuildmanager.js->0->235"
       ]
     },
     {
@@ -57762,13 +57849,13 @@
     {
       "en": "Nothing has changed on any device yet. This deployment stays in the list until you start or discard it.",
       "xloc": [
-        "agentbuildmanager.js->0->217"
+        "agentbuildmanager.js->0->248"
       ]
     },
     {
       "en": "Nothing was added to the catalog. Try again or close this dialog.",
       "xloc": [
-        "agentbuildmanager.js->0->283"
+        "agentbuildmanager.js->0->314"
       ]
     },
     {
@@ -58348,7 +58435,7 @@
       "zh-chs": "离线",
       "zh-cht": "離線",
       "xloc": [
-        "agentbuildmanager.js->0->154",
+        "agentbuildmanager.js->0->183",
         "default.handlebars->121->1903",
         "default.handlebars->container->column_l->p1->devListToolbarSpan->1->0->devListToolbar->DevFilterSelect->5",
         "default3.handlebars->123->1900",
@@ -58619,7 +58706,7 @@
       "zh-chs": "在线",
       "zh-cht": "線上",
       "xloc": [
-        "agentbuildmanager.js->0->153",
+        "agentbuildmanager.js->0->182",
         "default-mobile.handlebars->container->page_content->column_l->p2->xdevicesBar->1->7",
         "default.handlebars->container->column_l->p1->devListToolbarSpan->1->0->devListToolbar->19->1",
         "default.handlebars->container->column_l->p1->devListToolbarSpan->1->0->devListToolbar->DevFilterSelect->3",
@@ -58787,13 +58874,13 @@
     {
       "en": "Only successful runs with available artifacts matching these names are listed:",
       "xloc": [
-        "agentbuildmanager.js->0->245"
+        "agentbuildmanager.js->0->276"
       ]
     },
     {
       "en": "Only the administrator who created this deployment can start or resume it.",
       "xloc": [
-        "agentbuildmanager.js->0->219"
+        "agentbuildmanager.js->0->250"
       ]
     },
     {
@@ -59536,7 +59623,7 @@
     {
       "en": "PR number",
       "xloc": [
-        "agentbuildmanager.js->0->250"
+        "agentbuildmanager.js->0->281"
       ]
     },
     {
@@ -59667,7 +59754,7 @@
     {
       "en": "Page {0}",
       "xloc": [
-        "agentbuildmanager.js->0->265"
+        "agentbuildmanager.js->0->296"
       ]
     },
     {
@@ -59703,7 +59790,7 @@
     {
       "en": "Pages",
       "xloc": [
-        "agentbuildmanager.js->0->263",
+        "agentbuildmanager.js->0->294",
         "agentbuildmanager.js->0->3"
       ]
     },
@@ -60476,7 +60563,7 @@
       "zh-chs": "暂停",
       "zh-cht": "暫停",
       "xloc": [
-        "agentbuildmanager.js->0->200",
+        "agentbuildmanager.js->0->229",
         "player.handlebars->p11->deskarea0->deskarea4->3"
       ]
     },
@@ -61317,8 +61404,8 @@
     {
       "en": "Pinned",
       "xloc": [
-        "agentbuildmanager.js->0->143",
-        "agentbuildmanager.js->0->150",
+        "agentbuildmanager.js->0->172",
+        "agentbuildmanager.js->0->179",
         "agentbuildmanager.js->0->28"
       ]
     },
@@ -62556,13 +62643,13 @@
     {
       "en": "Preview deployment",
       "xloc": [
-        "agentbuildmanager.js->0->182"
+        "agentbuildmanager.js->0->211"
       ]
     },
     {
       "en": "Previous",
       "xloc": [
-        "agentbuildmanager.js->0->264",
+        "agentbuildmanager.js->0->295",
         "agentbuildmanager.js->0->4"
       ]
     },
@@ -63278,8 +63365,8 @@
     {
       "en": "Pull request",
       "xloc": [
-        "agentbuildmanager.js->0->237",
-        "agentbuildmanager.js->0->270"
+        "agentbuildmanager.js->0->268",
+        "agentbuildmanager.js->0->301"
       ]
     },
     {
@@ -64381,7 +64468,7 @@
     {
       "en": "Received {0} MiB of {1} MiB",
       "xloc": [
-        "agentbuildmanager.js->0->70"
+        "agentbuildmanager.js->0->71"
       ]
     },
     {
@@ -64798,7 +64885,7 @@
       "zh-chs": "刷新",
       "zh-cht": "刷新",
       "xloc": [
-        "agentbuildmanager.js->0->201",
+        "agentbuildmanager.js->0->230",
         "default-mobile.handlebars->55->1143",
         "default-mobile.handlebars->55->1186",
         "default-mobile.handlebars->container->page_content->column_l->p10->p10files->p13toolbar->1->2->1->3",
@@ -65759,32 +65846,32 @@
     {
       "en": "Release available",
       "xloc": [
-        "agentbuildmanager.js->0->58"
+        "agentbuildmanager.js->0->59"
       ]
     },
     {
       "en": "Release available:",
       "xloc": [
-        "agentcatalog.handlebars->agentCatalogContent->p44state->5"
+        "agentcatalog.handlebars->agentCatalogContent->p44state->3"
       ]
     },
     {
       "en": "Release files",
       "xloc": [
-        "agentbuildmanager.js->0->274"
+        "agentbuildmanager.js->0->305"
       ]
     },
     {
       "en": "Release updates",
       "xloc": [
-        "agentbuildmanager.js->0->53"
+        "agentbuildmanager.js->0->54"
       ]
     },
     {
       "en": "Releases",
       "xloc": [
-        "agentbuildmanager.js->0->238",
-        "agentbuildmanager.js->0->271"
+        "agentbuildmanager.js->0->269",
+        "agentbuildmanager.js->0->302"
       ]
     },
     {
@@ -66806,6 +66893,12 @@
       ]
     },
     {
+      "en": "Remote desktop supported",
+      "xloc": [
+        "agentbuildmanager.js->0->142"
+      ]
+    },
+    {
       "bs": "Daljinski ulaz je zaključan",
       "ca": "L'entrada remota està bloquejada",
       "cs": "Vzdálený vstup je uzamčen",
@@ -67335,7 +67428,7 @@
     {
       "en": "Remove build",
       "xloc": [
-        "agentbuildmanager.js->0->135"
+        "agentbuildmanager.js->0->162"
       ]
     },
     {
@@ -67428,6 +67521,12 @@
         "default.handlebars->121->2436",
         "default3.handlebars->123->1095",
         "default3.handlebars->123->2448"
+      ]
+    },
+    {
+      "en": "Remove from the list",
+      "xloc": [
+        "agentbuildmanager.js->0->244"
       ]
     },
     {
@@ -67629,7 +67728,7 @@
     {
       "en": "Remove this build from the server",
       "xloc": [
-        "agentbuildmanager.js->0->129"
+        "agentbuildmanager.js->0->141"
       ]
     },
     {
@@ -68234,9 +68333,21 @@
       ]
     },
     {
+      "en": "Removes this build selection. These agent types fall back to the remaining server, domain, release or bundled defaults. Devices following the default may update on reconnect.",
+      "xloc": [
+        "agentbuildmanager.js->0->160"
+      ]
+    },
+    {
+      "en": "Removes this build selection. This agent type falls back to the remaining server, domain, release or bundled default. Devices following the default may update on reconnect.",
+      "xloc": [
+        "agentbuildmanager.js->0->129"
+      ]
+    },
+    {
       "en": "Removing deletes the uploaded files from this server. It is refused while a device or a deployment still references the build.",
       "xloc": [
-        "agentbuildmanager.js->0->134"
+        "agentbuildmanager.js->0->158"
       ]
     },
     {
@@ -68508,8 +68619,8 @@
     {
       "en": "Reported installed",
       "xloc": [
-        "agentbuildmanager.js->0->142",
-        "agentbuildmanager.js->0->149"
+        "agentbuildmanager.js->0->171",
+        "agentbuildmanager.js->0->178"
       ]
     },
     {
@@ -68553,7 +68664,7 @@
     {
       "en": "Repository",
       "xloc": [
-        "agentbuildmanager.js->0->234"
+        "agentbuildmanager.js->0->265"
       ]
     },
     {
@@ -69100,8 +69211,8 @@
     {
       "en": "Resolving download...",
       "xloc": [
-        "agentbuildmanager.js->0->279",
-        "agentbuildmanager.js->0->285"
+        "agentbuildmanager.js->0->310",
+        "agentbuildmanager.js->0->316"
       ]
     },
     {
@@ -69204,13 +69315,13 @@
     {
       "en": "Restore build",
       "xloc": [
-        "agentbuildmanager.js->0->136"
+        "agentbuildmanager.js->0->163"
       ]
     },
     {
       "en": "Restore missing files",
       "xloc": [
-        "agentbuildmanager.js->0->75"
+        "agentbuildmanager.js->0->77"
       ]
     },
     {
@@ -69276,32 +69387,32 @@
     {
       "en": "Restore to the catalog",
       "xloc": [
-        "agentbuildmanager.js->0->127"
+        "agentbuildmanager.js->0->137"
       ]
     },
     {
       "en": "Restoring files does not change device policies. It only fetches the release files this server is configured to serve.",
       "xloc": [
-        "agentbuildmanager.js->0->72"
+        "agentbuildmanager.js->0->73"
       ]
     },
     {
       "en": "Restoring files. You can close this dialog while downloads continue.",
       "xloc": [
-        "agentbuildmanager.js->0->47"
+        "agentbuildmanager.js->0->48"
       ]
     },
     {
       "en": "Restoring files...",
       "xloc": [
-        "agentbuildmanager.js->0->64",
-        "agentbuildmanager.js->0->74"
+        "agentbuildmanager.js->0->65",
+        "agentbuildmanager.js->0->75"
       ]
     },
     {
       "en": "Restoring puts this build back in the list of builds that can be pinned.",
       "xloc": [
-        "agentbuildmanager.js->0->133"
+        "agentbuildmanager.js->0->157"
       ]
     },
     {
@@ -69370,21 +69481,21 @@
     {
       "en": "Resume remaining",
       "xloc": [
-        "agentbuildmanager.js->0->222"
+        "agentbuildmanager.js->0->253"
       ]
     },
     {
       "en": "Retry",
       "xloc": [
-        "agentbuildmanager.js->0->225",
-        "agentbuildmanager.js->0->268",
-        "agentbuildmanager.js->0->77"
+        "agentbuildmanager.js->0->256",
+        "agentbuildmanager.js->0->299",
+        "agentbuildmanager.js->0->79"
       ]
     },
     {
       "en": "Returning to the server default can replace the installed agent file with an older one.",
       "xloc": [
-        "agentbuildmanager.js->0->166"
+        "agentbuildmanager.js->0->195"
       ]
     },
     {
@@ -69423,20 +69534,20 @@
     {
       "en": "Review agent files",
       "xloc": [
-        "agentbuildmanager.js->0->97"
+        "agentbuildmanager.js->0->99"
       ]
     },
     {
       "en": "Review files",
       "xloc": [
-        "agentbuildmanager.js->0->82",
-        "agentbuildmanager.js->0->89"
+        "agentbuildmanager.js->0->84",
+        "agentbuildmanager.js->0->91"
       ]
     },
     {
       "en": "Review the detected platform, requirements and hashes before the files become a build.",
       "xloc": [
-        "agentbuildmanager.js->0->79"
+        "agentbuildmanager.js->0->81"
       ]
     },
     {
@@ -69802,9 +69913,9 @@
     {
       "en": "Run ID",
       "xloc": [
-        "agentbuildmanager.js->0->239",
-        "agentbuildmanager.js->0->251",
-        "agentbuildmanager.js->0->272"
+        "agentbuildmanager.js->0->270",
+        "agentbuildmanager.js->0->282",
+        "agentbuildmanager.js->0->303"
       ]
     },
     {
@@ -70167,7 +70278,7 @@
     {
       "en": "Runtime requirements are not fully known.",
       "xloc": [
-        "agentbuildmanager.js->0->96"
+        "agentbuildmanager.js->0->98"
       ]
     },
     {
@@ -70330,8 +70441,8 @@
     {
       "en": "SHA256",
       "xloc": [
-        "agentcatalog.handlebars->agentCatalogContent->7->1->1->3->10->1",
-        "agentcatalog.handlebars->agentCatalogContent->7->1->1->5->3->1->11->3->6",
+        "agentcatalog.handlebars->agentCatalogContent->7->1->1->3->12->1",
+        "agentcatalog.handlebars->agentCatalogContent->7->1->1->5->3->1->11->3->10",
         "agentcatalog.handlebars->agentCatalogContent->9->5->3->1->7->3->1"
       ]
     },
@@ -70339,7 +70450,7 @@
       "en": "SHA384",
       "xloc": [
         "agentcatalog.handlebars->agentCatalogContent->5->5->3->1->11->2->0",
-        "agentcatalog.handlebars->agentCatalogContent->7->1->1->5->3->1->11->3->7",
+        "agentcatalog.handlebars->agentCatalogContent->7->1->1->5->3->1->11->3->11",
         "agentcatalog.handlebars->agentCatalogContent->9->5->3->1->7->3->2",
         "default-mobile.handlebars->55->1208",
         "default.handlebars->121->3678",
@@ -71625,7 +71736,7 @@
     {
       "en": "Scheduled release checks are disabled.",
       "xloc": [
-        "agentbuildmanager.js->0->57"
+        "agentbuildmanager.js->0->58"
       ]
     },
     {
@@ -71818,7 +71929,7 @@
       "zh-chs": "搜寻",
       "zh-cht": "搜尋",
       "xloc": [
-        "agentbuildmanager.js->0->146",
+        "agentbuildmanager.js->0->175",
         "default.handlebars->121->1631",
         "default.handlebars->121->3765",
         "default.handlebars->121->869",
@@ -72197,7 +72308,7 @@
     {
       "en": "Select",
       "xloc": [
-        "agentbuildmanager.js->0->108"
+        "agentbuildmanager.js->0->110"
       ]
     },
     {
@@ -72681,14 +72792,14 @@
     {
       "en": "Select at least one agent file to deploy.",
       "xloc": [
-        "agentbuildmanager.js->0->180"
+        "agentbuildmanager.js->0->209"
       ]
     },
     {
       "en": "Select at most 16 agent files.",
       "xloc": [
-        "agentbuildmanager.js->0->276",
-        "agentbuildmanager.js->0->86"
+        "agentbuildmanager.js->0->307",
+        "agentbuildmanager.js->0->88"
       ]
     },
     {
@@ -72724,26 +72835,26 @@
     {
       "en": "Select the agent files to download.",
       "xloc": [
-        "agentbuildmanager.js->0->275"
+        "agentbuildmanager.js->0->306"
       ]
     },
     {
       "en": "Select the agent files to upload.",
       "xloc": [
-        "agentbuildmanager.js->0->83",
-        "agentbuildmanager.js->0->85"
+        "agentbuildmanager.js->0->85",
+        "agentbuildmanager.js->0->87"
       ]
     },
     {
       "en": "Select the compiled agent type",
       "xloc": [
-        "agentbuildmanager.js->0->105"
+        "agentbuildmanager.js->0->107"
       ]
     },
     {
       "en": "Select the compiled agent type.",
       "xloc": [
-        "agentbuildmanager.js->0->115"
+        "agentbuildmanager.js->0->121"
       ]
     },
     {
@@ -72852,9 +72963,15 @@
       ]
     },
     {
+      "en": "Selected build unavailable",
+      "xloc": [
+        "agentcatalog.handlebars->agentCatalogContent->5->5->3->1->7->6"
+      ]
+    },
+    {
       "en": "Selected devices: {0}",
       "xloc": [
-        "agentbuildmanager.js->0->176"
+        "agentbuildmanager.js->0->205"
       ]
     },
     {
@@ -74403,6 +74520,13 @@
       ]
     },
     {
+      "en": "Server branding applied, re-signed",
+      "xloc": [
+        "agentbuildmanager.js->0->144",
+        "agentcatalog.handlebars->agentCatalogContent->7->1->1->5->3->1->11->3->6"
+      ]
+    },
+    {
       "en": "Server default",
       "xloc": [
         "agentbuildmanager.js->0->24",
@@ -75066,7 +75190,13 @@
     {
       "en": "Set agentBuilds.github.token in this domain in config.json, then restart MeshCentral. Actions downloads need Actions read, private releases need Contents read, private pull request lookup needs Pull requests read.",
       "xloc": [
-        "agentbuildmanager.js->0->244"
+        "agentbuildmanager.js->0->275"
+      ]
+    },
+    {
+      "en": "Set as default",
+      "xloc": [
+        "agentbuildmanager.js->0->164"
       ]
     },
     {
@@ -75754,8 +75884,8 @@
       "zh-chs": "显示",
       "zh-cht": "顯示",
       "xloc": [
-        "agentbuildmanager.js->0->140",
-        "agentbuildmanager.js->0->194",
+        "agentbuildmanager.js->0->169",
+        "agentbuildmanager.js->0->223",
         "default-mobile.handlebars->container->page_content->column_l->p44->p44info->p44head->1->0->1->0",
         "default.handlebars->container->column_l->p16->3->1->0->5",
         "default.handlebars->container->column_l->p3->3->1->0->5",
@@ -76713,6 +76843,12 @@
       ]
     },
     {
+      "en": "Signed before upload",
+      "xloc": [
+        "agentbuildmanager.js->0->146"
+      ]
+    },
+    {
       "en": "Silent uninstall will be performed",
       "bs": "Izvršit će se tiha deinstalacija",
       "ca": "Es realitzarà una desinstal·lació silenciosa",
@@ -77110,20 +77246,20 @@
     {
       "en": "Skip this agent type",
       "xloc": [
-        "agentbuildmanager.js->0->175"
+        "agentbuildmanager.js->0->204"
       ]
     },
     {
       "en": "Skipped",
       "xloc": [
         "agentbuildmanager.js->0->14",
-        "agentbuildmanager.js->0->208"
+        "agentbuildmanager.js->0->237"
       ]
     },
     {
       "en": "Skipped: {0}",
       "xloc": [
-        "agentbuildmanager.js->0->192"
+        "agentbuildmanager.js->0->221"
       ]
     },
     {
@@ -77581,7 +77717,7 @@
     {
       "en": "Some selected devices are not loaded in this session. The preview checks them on the server.",
       "xloc": [
-        "agentbuildmanager.js->0->164"
+        "agentbuildmanager.js->0->193"
       ]
     },
     {
@@ -77822,7 +77958,7 @@
     {
       "en": "Source",
       "xloc": [
-        "agentbuildmanager.js->0->228",
+        "agentbuildmanager.js->0->259",
         "agentcatalog.handlebars->agentCatalogContent->5->5->1->0->3",
         "agentcatalog.handlebars->agentCatalogContent->5->5->3->1->7->0",
         "default-mobile.handlebars->55->1204",
@@ -77833,32 +77969,32 @@
     {
       "en": "Source and verification",
       "xloc": [
-        "agentbuildmanager.js->0->101",
+        "agentbuildmanager.js->0->103",
         "agentcatalog.handlebars->agentCatalogContent->7->1->1->3->0"
       ]
     },
     {
       "en": "Source commit",
       "xloc": [
-        "agentbuildmanager.js->0->288"
+        "agentbuildmanager.js->0->319"
       ]
     },
     {
       "en": "Source commit: {{#if sourceUrl}}",
       "xloc": [
-        "agentcatalog.handlebars->agentCatalogContent->7->1->1->3->2"
+        "agentcatalog.handlebars->agentCatalogContent->7->1->1->3->4"
       ]
     },
     {
       "en": "Source details describe where the files were obtained. They do not prove which source code an agent file contains or that it is safe to run.",
       "xloc": [
-        "agentcatalog.handlebars->agentCatalogContent->7->1->1->3->12"
+        "agentcatalog.handlebars->agentCatalogContent->7->1->1->3->14"
       ]
     },
     {
       "en": "Source details describe where the files were obtained. They do not prove which source code the agent file contains or that it is safe to run.",
       "xloc": [
-        "agentbuildmanager.js->0->292"
+        "agentbuildmanager.js->0->323"
       ]
     },
     {
@@ -78808,7 +78944,7 @@
     {
       "en": "Start a deployment with Group Action on selected devices, or with Actions on the mobile device page.",
       "xloc": [
-        "agentbuildmanager.js->0->188"
+        "agentbuildmanager.js->0->217"
       ]
     },
     {
@@ -78873,7 +79009,7 @@
     {
       "en": "Start deployment",
       "xloc": [
-        "agentbuildmanager.js->0->221"
+        "agentbuildmanager.js->0->252"
       ]
     },
     {
@@ -79586,7 +79722,7 @@
     {
       "en": "State whether this file includes remote desktop support.",
       "xloc": [
-        "agentbuildmanager.js->0->116"
+        "agentbuildmanager.js->0->122"
       ]
     },
     {
@@ -81144,7 +81280,7 @@
     {
       "en": "Tag",
       "xloc": [
-        "agentbuildmanager.js->0->289"
+        "agentbuildmanager.js->0->320"
       ]
     },
     {
@@ -82130,7 +82266,7 @@
     {
       "en": "The selected files are larger than 128 MiB in total.",
       "xloc": [
-        "agentbuildmanager.js->0->87"
+        "agentbuildmanager.js->0->89"
       ]
     },
     {
@@ -82274,7 +82410,7 @@
     {
       "en": "These release files supply the server defaults for new agent installs.",
       "xloc": [
-        "agentbuildmanager.js->0->67"
+        "agentbuildmanager.js->0->68"
       ]
     },
     {
@@ -82447,13 +82583,13 @@
     {
       "en": "This build is archived.",
       "xloc": [
-        "agentbuildmanager.js->0->126"
+        "agentbuildmanager.js->0->135"
       ]
     },
     {
       "en": "This build is no longer in the catalog.",
       "xloc": [
-        "agentbuildmanager.js->0->122",
+        "agentbuildmanager.js->0->131",
         "default-mobile.handlebars->55->1236",
         "default.handlebars->121->3706",
         "default3.handlebars->123->3702"
@@ -82476,9 +82612,21 @@
       ]
     },
     {
+      "en": "This build supplies a server default. Removing it clears those selections. Devices following the default may update on reconnect.",
+      "xloc": [
+        "agentbuildmanager.js->0->153"
+      ]
+    },
+    {
+      "en": "This build supplies the server default agent.",
+      "xloc": [
+        "agentbuildmanager.js->0->136"
+      ]
+    },
+    {
       "en": "This build was not uploaded to this server, so it cannot be removed here.",
       "xloc": [
-        "agentbuildmanager.js->0->131"
+        "agentbuildmanager.js->0->155"
       ]
     },
     {
@@ -82776,7 +82924,7 @@
     {
       "en": "This repository has no release on this page. Try Workflow runs.",
       "xloc": [
-        "agentbuildmanager.js->0->259"
+        "agentbuildmanager.js->0->290"
       ]
     },
     {
@@ -84630,7 +84778,7 @@
     {
       "en": "Try again",
       "xloc": [
-        "agentbuildmanager.js->0->284"
+        "agentbuildmanager.js->0->315"
       ]
     },
     {
@@ -84721,7 +84869,7 @@
     {
       "en": "Try the next page.",
       "xloc": [
-        "agentbuildmanager.js->0->261"
+        "agentbuildmanager.js->0->292"
       ]
     },
     {
@@ -85838,7 +85986,7 @@
     {
       "en": "Unable to read the upload result.",
       "xloc": [
-        "agentbuildmanager.js->0->93"
+        "agentbuildmanager.js->0->95"
       ]
     },
     {
@@ -85972,7 +86120,7 @@
     {
       "en": "Unfinished deployments",
       "xloc": [
-        "agentbuildmanager.js->0->174"
+        "agentbuildmanager.js->0->203"
       ]
     },
     {
@@ -86933,7 +87081,7 @@
     {
       "en": "Up to 16 files, 64 MiB each and 128 MiB in total.",
       "xloc": [
-        "agentbuildmanager.js->0->81"
+        "agentbuildmanager.js->0->83"
       ]
     },
     {
@@ -87004,7 +87152,7 @@
     {
       "en": "Update SHA384",
       "xloc": [
-        "agentbuildmanager.js->0->112"
+        "agentbuildmanager.js->0->118"
       ]
     },
     {
@@ -87018,15 +87166,16 @@
     {
       "en": "Update hash",
       "xloc": [
+        "agentbuildmanager.js->0->147",
         "agentcatalog.handlebars->agentCatalogContent->5->5->1->0->5",
         "agentcatalog.handlebars->agentCatalogContent->5->5->3->1->11->0",
-        "agentcatalog.handlebars->agentCatalogContent->7->1->1->5->3->1->11->3->9"
+        "agentcatalog.handlebars->agentCatalogContent->7->1->1->5->3->1->11->3->13"
       ]
     },
     {
       "en": "Update policy",
       "xloc": [
-        "agentbuildmanager.js->0->165",
+        "agentbuildmanager.js->0->194",
         "default-mobile.handlebars->55->1152",
         "default.handlebars->121->3622",
         "default3.handlebars->123->3618"
@@ -87267,7 +87416,7 @@
     {
       "en": "Upload agent files",
       "xloc": [
-        "agentbuildmanager.js->0->78"
+        "agentbuildmanager.js->0->80"
       ]
     },
     {
@@ -87346,7 +87495,7 @@
     {
       "en": "Upload failed.",
       "xloc": [
-        "agentbuildmanager.js->0->94"
+        "agentbuildmanager.js->0->96"
       ]
     },
     {
@@ -87382,7 +87531,7 @@
     {
       "en": "Upload interrupted. Try again.",
       "xloc": [
-        "agentbuildmanager.js->0->95"
+        "agentbuildmanager.js->0->97"
       ]
     },
     {
@@ -87669,13 +87818,13 @@
     {
       "en": "Uploading files...",
       "xloc": [
-        "agentbuildmanager.js->0->91"
+        "agentbuildmanager.js->0->93"
       ]
     },
     {
       "en": "Uploading...",
       "xloc": [
-        "agentbuildmanager.js->0->90"
+        "agentbuildmanager.js->0->92"
       ]
     },
     {
@@ -87900,7 +88049,7 @@
     {
       "en": "Use a batch size between 1 and 20.",
       "xloc": [
-        "agentbuildmanager.js->0->181"
+        "agentbuildmanager.js->0->210"
       ]
     },
     {
@@ -87916,6 +88065,12 @@
       "xloc": [
         "default.handlebars->121->2573",
         "default3.handlebars->123->2583"
+      ]
+    },
+    {
+      "en": "Use as the server default agent",
+      "xloc": [
+        "agentbuildmanager.js->0->139"
       ]
     },
     {
@@ -90073,9 +90228,9 @@
       "zh-cht": "已驗證",
       "xloc": [
         "agentbuildmanager.js->0->17",
-        "agentbuildmanager.js->0->198",
-        "agentbuildmanager.js->0->204",
-        "agentbuildmanager.js->0->214",
+        "agentbuildmanager.js->0->227",
+        "agentbuildmanager.js->0->233",
+        "agentbuildmanager.js->0->245",
         "default.handlebars->121->3267",
         "default3.handlebars->123->3265"
       ]
@@ -90221,7 +90376,7 @@
     {
       "en": "Verified: {0}",
       "xloc": [
-        "agentbuildmanager.js->0->190"
+        "agentbuildmanager.js->0->219"
       ]
     },
     {
@@ -90564,7 +90719,7 @@
     {
       "en": "View deployments",
       "xloc": [
-        "agentbuildmanager.js->0->172"
+        "agentbuildmanager.js->0->201"
       ]
     },
     {
@@ -91935,7 +92090,7 @@
     {
       "en": "Will be sent to the preview",
       "xloc": [
-        "agentbuildmanager.js->0->160"
+        "agentbuildmanager.js->0->189"
       ]
     },
     {
@@ -92949,20 +93104,20 @@
     {
       "en": "Without internet access, upload the required release files into Agent builds, then restore missing files here. The files must match the hashes in the release manifest.",
       "xloc": [
-        "agentbuildmanager.js->0->73"
+        "agentbuildmanager.js->0->74"
       ]
     },
     {
       "en": "Workflow run files",
       "xloc": [
-        "agentbuildmanager.js->0->273"
+        "agentbuildmanager.js->0->304"
       ]
     },
     {
       "en": "Workflow runs",
       "xloc": [
-        "agentbuildmanager.js->0->236",
-        "agentbuildmanager.js->0->269"
+        "agentbuildmanager.js->0->267",
+        "agentbuildmanager.js->0->300"
       ]
     },
     {
@@ -93583,7 +93738,7 @@
     {
       "en": "Your unfinished deployments: {0}. The server allows ten, so a preview can be refused until one is finished or cancelled.",
       "xloc": [
-        "agentbuildmanager.js->0->173"
+        "agentbuildmanager.js->0->202"
       ]
     },
     {
@@ -94528,14 +94683,14 @@
     {
       "en": "agent file",
       "xloc": [
-        "agentbuildmanager.js->0->98"
+        "agentbuildmanager.js->0->100"
       ]
     },
     {
       "en": "agent files",
       "xloc": [
-        "agentbuildmanager.js->0->124",
-        "agentbuildmanager.js->0->99"
+        "agentbuildmanager.js->0->101",
+        "agentbuildmanager.js->0->133"
       ]
     },
     {
@@ -94853,13 +95008,13 @@
     {
       "en": "deployment",
       "xloc": [
-        "agentbuildmanager.js->0->186"
+        "agentbuildmanager.js->0->215"
       ]
     },
     {
       "en": "deployments",
       "xloc": [
-        "agentbuildmanager.js->0->187"
+        "agentbuildmanager.js->0->216"
       ]
     },
     {
@@ -94895,7 +95050,7 @@
     {
       "en": "devices selected",
       "xloc": [
-        "agentbuildmanager.js->0->159"
+        "agentbuildmanager.js->0->188"
       ]
     },
     {
@@ -94958,6 +95113,12 @@
         "default.handlebars->121->3556",
         "default3.handlebars->123->3549",
         "default3.handlebars->123->3552"
+      ]
+    },
+    {
+      "en": "from {{defaultBuild.name}}",
+      "xloc": [
+        "agentcatalog.handlebars->agentCatalogContent->5->5->3->1->7->4"
       ]
     },
     {
@@ -95597,7 +95758,7 @@
     {
       "en": "of",
       "xloc": [
-        "agentbuildmanager.js->0->50"
+        "agentbuildmanager.js->0->51"
       ]
     },
     {
@@ -95751,7 +95912,7 @@
     {
       "en": "release files are missing.",
       "xloc": [
-        "agentbuildmanager.js->0->51"
+        "agentbuildmanager.js->0->52"
       ]
     },
     {
@@ -95799,7 +95960,7 @@
     {
       "en": "this file is larger than 64 MiB.",
       "xloc": [
-        "agentbuildmanager.js->0->84"
+        "agentbuildmanager.js->0->86"
       ]
     },
     {
@@ -96266,13 +96427,13 @@
     {
       "en": "{0} devices",
       "xloc": [
-        "agentbuildmanager.js->0->189"
+        "agentbuildmanager.js->0->218"
       ]
     },
     {
       "en": "{0} devices, batches of {1}",
       "xloc": [
-        "agentbuildmanager.js->0->203"
+        "agentbuildmanager.js->0->232"
       ]
     },
     {
@@ -96761,7 +96922,7 @@
     {
       "en": "{0} of {1} devices finished, in batches of {2}",
       "xloc": [
-        "agentbuildmanager.js->0->211"
+        "agentbuildmanager.js->0->240"
       ]
     },
     {
@@ -97681,7 +97842,7 @@
       ]
     },
     {
-      "en": "{{#if catalog.downloads.restartRequired}}",
+      "en": "{{#if catalog.downloads.activating}}",
       "xloc": [
         "agentcatalog.handlebars->agentCatalogContent->p44state"
       ]
@@ -97690,6 +97851,12 @@
       "en": "{{#if commit}}",
       "xloc": [
         "agentcatalog.handlebars->agentCatalogContent->7->1->1->3"
+      ]
+    },
+    {
+      "en": "{{#if defaultBuild.unavailable}}",
+      "xloc": [
+        "agentcatalog.handlebars->agentCatalogContent->5->5->3->1->7"
       ]
     },
     {
@@ -97747,26 +97914,23 @@
         "agentcatalog.handlebars->agentCatalogContent",
         "agentcatalog.handlebars->agentCatalogContent->5->5->3",
         "agentcatalog.handlebars->agentCatalogContent->7->1->1->3",
-        "agentcatalog.handlebars->agentCatalogContent->7->1->1->3->4",
+        "agentcatalog.handlebars->agentCatalogContent->7->1->1->3->6",
         "agentcatalog.handlebars->agentCatalogContent->7->1->1->5->3",
         "agentcatalog.handlebars->agentCatalogContent->9->5->3"
       ]
     },
     {
-      "en": "{{/each}}\n            {{#each catalog.downloads.updates.repositories}}{{#if latest.updateAvailable}}",
-      "xloc": [
-        "agentcatalog.handlebars->agentCatalogContent->p44state"
-      ]
-    },
-    {
       "en": "{{/if}}",
       "xloc": [
+        "agentcatalog.handlebars->agentCatalogContent->5->5->3->1->1",
         "agentcatalog.handlebars->agentCatalogContent->5->5->3->1->11",
         "agentcatalog.handlebars->agentCatalogContent->5->5->3->1->5",
         "agentcatalog.handlebars->agentCatalogContent->5->5->3->1->5",
         "agentcatalog.handlebars->agentCatalogContent->5->5->3->1->7",
+        "agentcatalog.handlebars->agentCatalogContent->5->5->3->1->7",
         "agentcatalog.handlebars->agentCatalogContent->7->1->1->3",
-        "agentcatalog.handlebars->agentCatalogContent->7->1->1->3->2",
+        "agentcatalog.handlebars->agentCatalogContent->7->1->1->3->4",
+        "agentcatalog.handlebars->agentCatalogContent->7->1->1->5->3->1->1",
         "agentcatalog.handlebars->agentCatalogContent->7->1->1->5->3->1->11->3",
         "agentcatalog.handlebars->agentCatalogContent->7->1->1->5->3->1->5",
         "agentcatalog.handlebars->agentCatalogContent->7->1->1->5->3->1->9",
@@ -97775,7 +97939,7 @@
       ]
     },
     {
-      "en": "{{/if}}\n                                        {{#if sha256}}",
+      "en": "{{/if}}\n                                        {{#if customized}}",
       "xloc": [
         "agentcatalog.handlebars->agentCatalogContent->7->1->1->5->3->1->11->3"
       ]
@@ -97805,7 +97969,7 @@
       ]
     },
     {
-      "en": "{{/if}}\n            {{#each catalog.downloads.errors}}",
+      "en": "{{/if}}\n            {{#each catalog.downloads.updates.repositories}}{{#if latest.updateAvailable}}",
       "xloc": [
         "agentcatalog.handlebars->agentCatalogContent->p44state"
       ]
@@ -97813,7 +97977,13 @@
     {
       "en": "{{/if}} {{provenance.tag}}",
       "xloc": [
-        "agentcatalog.handlebars->agentCatalogContent->7->1->1->3->6"
+        "agentcatalog.handlebars->agentCatalogContent->7->1->1->3->8"
+      ]
+    },
+    {
+      "en": "{{/if}}{{#if defaultBuild}}",
+      "xloc": [
+        "agentcatalog.handlebars->agentCatalogContent->5->5->3->1->7"
       ]
     },
     {
@@ -97843,10 +98013,16 @@
       ]
     },
     {
+      "en": "{{/if}}{{/if}}\n                                        {{#if sha256}}",
+      "xloc": [
+        "agentcatalog.handlebars->agentCatalogContent->7->1->1->5->3->1->11->3"
+      ]
+    },
+    {
       "en": "{{agentHash}}",
       "xloc": [
         "agentcatalog.handlebars->agentCatalogContent->5->5->3->1->11->2->1->0",
-        "agentcatalog.handlebars->agentCatalogContent->7->1->1->5->3->1->11->3->9->1"
+        "agentcatalog.handlebars->agentCatalogContent->7->1->1->5->3->1->11->3->13->1"
       ]
     },
     {
@@ -97858,13 +98034,13 @@
     {
       "en": "{{commitTime}}",
       "xloc": [
-        "agentcatalog.handlebars->agentCatalogContent->7->1->1->3->2->3"
+        "agentcatalog.handlebars->agentCatalogContent->7->1->1->3->4->3"
       ]
     },
     {
       "en": "{{commit}}",
       "xloc": [
-        "agentcatalog.handlebars->agentCatalogContent->7->1->1->3->2->1"
+        "agentcatalog.handlebars->agentCatalogContent->7->1->1->3->4->1"
       ]
     },
     {
@@ -97874,23 +98050,40 @@
       ]
     },
     {
+      "en": "{{else}}{{#if signed}}",
+      "xloc": [
+        "agentcatalog.handlebars->agentCatalogContent->7->1->1->5->3->1->11->3"
+      ]
+    },
+    {
       "en": "{{else}}{{commit}}{{/if}} {{#if commitTime}}",
       "xloc": [
-        "agentcatalog.handlebars->agentCatalogContent->7->1->1->3->2"
+        "agentcatalog.handlebars->agentCatalogContent->7->1->1->3->4"
       ]
     },
     {
       "en": "{{filename}}",
       "xloc": [
-        "agentcatalog.handlebars->agentCatalogContent->5->5->3->1->1",
-        "agentcatalog.handlebars->agentCatalogContent->7->1->1->5->3->1->1",
         "agentcatalog.handlebars->agentCatalogContent->9->5->3->1->1"
+      ]
+    },
+    {
+      "en": "{{filename}}{{#if agentHash}}",
+      "xloc": [
+        "agentcatalog.handlebars->agentCatalogContent->5->5->3->1->1"
+      ]
+    },
+    {
+      "en": "{{filename}}{{#if matches}}",
+      "xloc": [
+        "agentcatalog.handlebars->agentCatalogContent->7->1->1->5->3->1->1"
       ]
     },
     {
       "en": "{{id}}",
       "xloc": [
-        "agentcatalog.handlebars->agentCatalogContent->7->1->1->3->4"
+        "agentcatalog.handlebars->agentCatalogContent->7->1->1->3->2->1",
+        "agentcatalog.handlebars->agentCatalogContent->7->1->1->3->6"
       ]
     },
     {
@@ -97898,14 +98091,14 @@
       "xloc": [
         "agentcatalog.handlebars->agentCatalogContent->5->5->3->1->3",
         "agentcatalog.handlebars->agentCatalogContent->7->1->1->1->agentBuildName-{{id}}",
-        "agentcatalog.handlebars->agentCatalogContent->7->1->1->3->4->1",
+        "agentcatalog.handlebars->agentCatalogContent->7->1->1->3->6->1",
         "agentcatalog.handlebars->agentCatalogContent->9->5->3->1->3"
       ]
     },
     {
       "en": "{{name}}: {{#if digestVerified}}Download SHA256 verified{{else}}No expected digest supplied{{/if}}",
       "xloc": [
-        "agentcatalog.handlebars->agentCatalogContent->7->1->1->3->10->0"
+        "agentcatalog.handlebars->agentCatalogContent->7->1->1->3->12->0"
       ]
     },
     {
@@ -97917,13 +98110,13 @@
     {
       "en": "{{provenance.event}} / {{provenance.branch}} / {{provenance.headRepository}} / Run {{provenance.runId}}, attempt {{provenance.runAttempt}}",
       "xloc": [
-        "agentcatalog.handlebars->agentCatalogContent->7->1->1->3->8"
+        "agentcatalog.handlebars->agentCatalogContent->7->1->1->3->10"
       ]
     },
     {
       "en": "{{provenance.repository}}{{#unless provenance.repository}}{{provenance.url}}{{/unless}}",
       "xloc": [
-        "agentcatalog.handlebars->agentCatalogContent->7->1->1->3->6->1"
+        "agentcatalog.handlebars->agentCatalogContent->7->1->1->3->8->1"
       ]
     },
     {
@@ -97941,21 +98134,21 @@
     {
       "en": "{{repository}} {{latest.tag}}",
       "xloc": [
-        "agentcatalog.handlebars->agentCatalogContent->p44state->5->1"
+        "agentcatalog.handlebars->agentCatalogContent->p44state->3->1"
       ]
     },
     {
       "en": "{{sha256}}",
       "xloc": [
-        "agentcatalog.handlebars->agentCatalogContent->7->1->1->3->10->1->3",
-        "agentcatalog.handlebars->agentCatalogContent->7->1->1->5->3->1->11->3->6->1",
+        "agentcatalog.handlebars->agentCatalogContent->7->1->1->3->12->1->3",
+        "agentcatalog.handlebars->agentCatalogContent->7->1->1->5->3->1->11->3->10->1",
         "agentcatalog.handlebars->agentCatalogContent->9->5->3->1->7->3->1->1"
       ]
     },
     {
       "en": "{{sha384}}",
       "xloc": [
-        "agentcatalog.handlebars->agentCatalogContent->7->1->1->5->3->1->11->3->7->1",
+        "agentcatalog.handlebars->agentCatalogContent->7->1->1->5->3->1->11->3->11->1",
         "agentcatalog.handlebars->agentCatalogContent->9->5->3->1->7->3->2->1"
       ]
     },
@@ -97976,20 +98169,19 @@
     {
       "en": "{{this}}",
       "xloc": [
-        "agentcatalog.handlebars->agentCatalogContent->1",
-        "agentcatalog.handlebars->agentCatalogContent->p44state->3"
+        "agentcatalog.handlebars->agentCatalogContent->1"
       ]
     },
     {
       "en": "{{uploadedAt}}",
       "xloc": [
-        "agentcatalog.handlebars->agentCatalogContent->7->1->1->3->14->1"
+        "agentcatalog.handlebars->agentCatalogContent->7->1->1->3->16->1"
       ]
     },
     {
       "en": "{{url}}",
       "xloc": [
-        "agentcatalog.handlebars->agentCatalogContent->7->1->1->3->10->1"
+        "agentcatalog.handlebars->agentCatalogContent->7->1->1->3->12->1"
       ]
     },
     {

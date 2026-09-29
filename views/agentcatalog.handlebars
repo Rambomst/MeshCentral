@@ -5,7 +5,7 @@
     <div id="agentCatalogContent">
         {{#each catalog.errors}}<p class="agent-error">{{this}}</p>{{/each}}
         <div id="p44state" data-agent-downloads="{{#if catalog.downloads}}1{{/if}}">
-            {{#if catalog.downloads.restartRequired}}<p class="agent-notice agent-warn">Default files are ready. Restart MeshCentral to load them.</p>{{/if}}
+            {{#if catalog.downloads.activating}}<p class="agent-notice">Loading new default agent files. Refresh to see the updated defaults.</p>{{/if}}
             {{#each catalog.downloads.updates.repositories}}{{#if latest.updateAvailable}}<p class="agent-notice">Release available: <a href="{{latest.sourceUrl}}" target="_blank" rel="noopener noreferrer">{{repository}} {{latest.tag}}</a>. Import this release to review and test its files.</p>{{/if}}{{/each}}
         </div>
         <section style="display:none" data-agent-group="defaults">
@@ -16,7 +16,7 @@
                 <div role="rowgroup">
                 {{#each catalog.defaults}}
                     <div role="row" data-agent-row data-agent-file="{{filename}}" data-agent-hash="{{agentHash}}" data-agent-search="{{filename}} {{name}} {{id}} {{source}} {{agentHash}}">
-                        <div role="cell" class="agent-file"><span class="agent-cell-label">Agent file</span>{{filename}}</div>
+                        <div role="cell" class="agent-file"><span class="agent-cell-label">Agent file</span>{{filename}}{{#if agentHash}}<div class="agent-file-tools"><a download href="{{@root.catalogUrl}}&default={{id}}">Download</a></div>{{/if}}</div>
                         <div role="cell"><span class="agent-cell-label">Agent type</span>{{name}} <span class="agent-muted">({{id}})</span></div>
                         <div role="cell" class="agent-usage"><span class="agent-cell-label">Devices</span>{{#if ../catalog.countsAvailable}}{{devices}} registered{{else}}<span class="agent-warn">Device counts unavailable</span>{{/if}}<div><button type="button" class="agent-linkbutton" data-file="{{filename}}" data-id="{{id}}" data-hash="{{agentHash}}" onclick="agentManagerOpen('usage',{agentId:Number(this.getAttribute('data-id')),hash:this.getAttribute('data-hash'),label:this.getAttribute('data-file')})">{{usage.installed}} installed</button></div>{{#if usage.pending}}<div>{{usage.pending}} waiting to update</div>{{/if}}{{#if usage.updating}}<div>{{usage.updating}} updating</div>{{/if}}{{#if usage.unconfirmed}}<div class="agent-warn">{{usage.unconfirmed}} not confirmed</div>{{/if}}</div>
                         <div role="cell"><span class="agent-cell-label">Source</span>{{source}}{{#if release}} <a href="{{release.sourceUrl}}" title="{{release.repository}}" target="_blank" rel="noopener noreferrer">{{release.tag}}</a>{{/if}}{{#if defaultBuild}} <span class="agent-muted">from {{defaultBuild.name}}</span>{{#if defaultBuild.unavailable}} <span class="agent-warn">Selected build unavailable</span>{{/if}} <button type="button" class="agent-linkbutton" data-build="{{defaultBuild.id}}" data-id="{{id}}" data-file="{{filename}}" onclick="agentManagerOpen('cleardefault',{build:this.getAttribute('data-build'),agentId:Number(this.getAttribute('data-id')),label:this.getAttribute('data-file')})">Clear default</button>{{/if}}</div>
@@ -47,7 +47,7 @@
                         <div role="rowgroup">
                         {{#each artifacts}}
                             <div role="row" data-agent-row data-agent-file="{{filename}}" data-agent-hash="{{agentHash}}" data-agent-verify="{{#if matches}}match{{else}}error{{/if}}" data-agent-search="{{../id}} {{filename}} {{platform}} {{cpu}} {{id}} {{requirements}} {{status}} {{agentHash}}">
-                                <div role="cell" class="agent-file"><span class="agent-cell-label">Agent file</span>{{filename}}</div>
+                                <div role="cell" class="agent-file"><span class="agent-cell-label">Agent file</span>{{filename}}{{#if matches}}<div class="agent-file-tools"><a download href="{{@root.catalogUrl}}&build={{../id}}&agentid={{id}}&file={{filename}}">Download</a></div>{{/if}}</div>
                                 <div role="cell"><span class="agent-cell-label">Agent type</span>{{platform}} / {{cpu}} <span class="agent-muted">({{id}})</span></div>
                                 <div role="cell"><span class="agent-cell-label">Requirements</span>{{#if requirements}}{{requirements}}{{else}}<span class="agent-muted">None recorded</span>{{/if}}</div>
                                 <div role="cell" class="agent-number"><span class="agent-cell-label">Size</span><span data-agent-bytes="{{size}}">{{size}}</span></div>

@@ -1351,21 +1351,40 @@ function CreateAgentDefaults(parent, options = {}) {
     const settings = (parent.config.settings || {}).agentdownloads || {};
     const names = new Set(Object.values(parent.meshAgentsArchitectureNumbers).map(x => x.localname));
     for (const name of ['MeshCentralRouter.exe', 'MeshCentralRouter.dmg', 'MeshCentralAssistant.exe']) names.add(name);
-    const selected = new Map(), entries = new Map();
-    let busy = null, errors = [], loaded = false, started = false, restartRequired = false, updates = null, activePaths = null;
+    const ready = new Map(), entries = new Map();
+    let busy = null, errors = [], loaded = false, activating = null, updates = null, activePaths = null;
 
     function regular(filename) {
         try { return fs.lstatSync(filename).isFile(); } catch (ex) { return false; }
     }
-    function sourcePath(name) {
-        if (!names.has(name)) return null;
-        if (activePaths) return activePaths.get(name);
-        if (selected.has(name)) return selected.get(name);
+    // Where a name resolves right now: a verified release file, else a local or bundled file for names
+    // outside the manifest. Nothing outside the manifest stands in for a release file that is not ready.
+    function current(name) {
+        if (ready.has(name)) return ready.get(name);
         if (entries.has(name)) return null;
         const local = path.join(root, name);
         if (regular(local)) return local;
         const original = path.join(bundled, name);
         return regular(original) ? original : null;
+    }
+    function sourcePath(name) {
+        if (!names.has(name)) return null;
+        return activePaths ? activePaths.get(name) : current(name);
+    }
+    function changed() {
+        return Array.from(names).some(name => activePaths.get(name) !== current(name));
+    }
+    // Swap in what changed since the paths were frozen. The server calls this at the start of an
+    // activation pass so signing and the table rebuild see the same files.
+    function activate() {
+        if (!activePaths || !changed()) return false;
+        activePaths = new Map(Array.from(names, name => [name, current(name)]));
+        return true;
+    }
+    function notify() {
+        if (typeof parent.activateAgentDefaults !== 'function') { activate(); return; }
+        const task = new Promise(resolve => parent.activateAgentDefaults(resolve)).catch(() => {}).finally(() => { if (activating === task) activating = null; });
+        activating = task;
     }
     function validate(manifest) {
         if (!manifest || manifest.schemaVersion !== 1 || !Array.isArray(manifest.releases) || manifest.releases.length > 32) throw new Error('Invalid default agent release manifest.');
@@ -1453,14 +1472,13 @@ function CreateAgentDefaults(parent, options = {}) {
     }
     function status() {
         return {
-            busy: !!busy, enabled: settings.enabled !== false, restartRequired, errors: errors.slice(),
+            busy: !!busy, activating: !!activating, enabled: settings.enabled !== false, errors: errors.slice(),
             updates: updates ? updates.status() : null,
             files: Array.from(entries.values(), ({ url, ...file }) => ({ ...file }))
         };
     }
     function prepare(localFiles) {
         if (busy) return busy;
-        const initial = !started;
         busy = (async function () {
             errors = [];
             try { if (!loaded) await load(); }
@@ -1472,31 +1490,30 @@ function CreateAgentDefaults(parent, options = {}) {
                     while (pending.length) {
                         const file = pending.shift();
                         delete file.error; delete file.received;
-                        try {
-                            const filename = await resolve(file, controller.signal, localFiles);
-                            if (initial && !activePaths) selected.set(file.filename, filename);
-                            else if (sourcePath(file.filename) !== filename) restartRequired = true;
-                        } catch (ex) {
+                        try { ready.set(file.filename, await resolve(file, controller.signal, localFiles)); }
+                        catch (ex) {
                             file.status = 'Unavailable'; file.error = ex.message;
                             errors.push(file.filename + ': ' + ex.message);
                         }
                     }
                 }));
             } finally { clearTimeout(timer); }
-        })().finally(() => { started = true; busy = null; });
+            // Files that landed after start() froze the paths are switched in by the server, not by a restart.
+            if (activePaths && changed()) notify();
+        })().finally(() => { busy = null; });
         return busy;
     }
     function info(name) {
         const file = entries.get(name);
-        if (!file || !selected.has(name)) return null;
+        if (!file || !ready.has(name) || (activePaths && activePaths.get(name) !== ready.get(name))) return null;
         return { repository: file.repository, tag: file.tag, sourceUrl: file.sourceUrl, sha384: file.sha384 };
     }
     function start() {
         // Signing and table loading must see the same files after the startup download wait ends.
-        if (!activePaths) activePaths = new Map(Array.from(names, name => [name, sourcePath(name)]));
+        if (!activePaths) activePaths = new Map(Array.from(names, name => [name, current(name)]));
         if (updates) updates.start();
     }
-    return { prepare, status, sourcePath, info, start, checkUpdates: () => updates ? updates.check(true) : Promise.resolve() };
+    return { prepare, status, sourcePath, info, start, activate, checkUpdates: () => updates ? updates.check(true) : Promise.resolve() };
 }
 
 // Build catalog: bundled agents, uploads and imports

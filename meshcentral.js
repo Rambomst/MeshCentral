@@ -1921,6 +1921,9 @@ function CreateMeshCentralServer(config, args) {
         try {
             for (var id in obj.config.domains) { if (obj.config.domains[id].share == null) await obj.agentBuildDefaultStore.refresh(obj.config.domains[id]); }
         } catch (ex) { console.error('Unable to load server default agents: ' + ex.message); process.exit(1); return; }
+        // Release files that land after the wait below are switched in by activateAgentDefaults, which
+        // holds until this first signing pass and table load have finished.
+        obj.agentTablesReady = new Promise(function (resolve) { obj.agentTablesLoaded = resolve; });
         obj.agentDefaults = require('./agentbuilds').CreateAgentDefaults(obj);
         // Never block server startup on default agent downloads. An offline or slow-network server must come up
         // promptly and run from cached, bundled or manually uploaded builds; downloads finish in the background.
@@ -1967,6 +1970,7 @@ function CreateMeshCentralServer(config, args) {
         obj.signMeshAgents(obj.config.domains[''], function () {
             obj.updateMeshAgentsTable(obj.config.domains[''], function () {
                 obj.updateMeshAgentInstallScripts();
+                obj.agentTablesLoaded();
 
                 // Setup and start the web server
                 obj.crypto.randomBytes(48, function (err, buf) {
@@ -3272,7 +3276,9 @@ function CreateMeshCentralServer(config, args) {
         // Setup the domain is specified
         var objx = domain, suffix = '';
         if (domain.id == '') { objx = obj; } else { suffix = '-' + domain.id; objx.meshAgentBinaries = {}; }
-        const signedSources = objx.signedAgentSources = {};
+        // Published when the pass ends: a table built during a later pass must not see a half-filled map.
+        const signedSources = {};
+        const done = function () { objx.signedAgentSources = signedSources; func(); };
 
         // Check if a custom agent signing certificate is available
         var agentSignCertInfo = require('./authenticode.js').loadCertificates([obj.path.join(obj.datapath, 'agentsigningcert.pem')]);
@@ -3285,7 +3291,7 @@ function CreateMeshCentralServer(config, args) {
                 extraCerts: [obj.certificateOperations.forge.pki.certificateFromPem(obj.certificates.root.cert)]
             }
         }
-        if (agentSignCertInfo == null) { func(); return; } // No code signing certificate, nothing to do.
+        if (agentSignCertInfo == null) { done(); return; } // No code signing certificate, nothing to do.
 
         // Setup the domain is specified
         var objx = domain, suffix = '';
@@ -3323,12 +3329,12 @@ function CreateMeshCentralServer(config, args) {
             archIds.push(archid);
         }
 
-        if (archIds.length === 0) { func(); return; }
+        if (archIds.length === 0) { done(); return; }
 
         var currentArchIndex = 0;
 
         function signNextAgent() {
-            if (currentArchIndex >= archIds.length) { func(); return; }
+            if (currentArchIndex >= archIds.length) { done(); return; }
 
             var archid = archIds[currentArchIndex];
             currentArchIndex++;
@@ -3676,6 +3682,38 @@ function CreateMeshCentralServer(config, args) {
         if (resChanges == false) { handler.sign(cert, signingArguments, done); } else { handler.writeExecutable(signingArguments, cert, done); }
     }
 
+    // Late default agent downloads: swap the new paths in, run the signing pass and rebuild the default
+    // domain's table, as startup does, so no restart is needed. One pass runs at a time; a request made
+    // during a pass queues one more. reloadMeshAgents waits out the signing so it never builds a table
+    // from a half-rewritten signedagents folder.
+    obj.activateAgentDefaults = function (func) {
+        if (typeof func != 'function') func = function () { };
+        var state = obj.agentActivationState;
+        if (state != null) { state.waiting.push(func); state.rerun = true; return; }
+        state = obj.agentActivationState = { waiting: [func], rerun: false };
+        function done(err) {
+            const callbacks = state.waiting;
+            delete obj.agentActivationState;
+            for (var i in callbacks) { try { callbacks[i](err); } catch (ex) { } }
+        }
+        function pass() {
+            state.rerun = false;
+            if ((obj.agentDefaults == null) || !obj.agentDefaults.activate()) { done(); return; }
+            console.log('Default agent files downloaded, loading them.');
+            obj.agentActivation = new Promise(function (resolve) { obj.signMeshAgents(obj.config.domains[''], resolve); });
+            obj.agentActivation.then(function () {
+                obj.agentActivation = null;
+                obj.updateMeshTools();
+                obj.reloadMeshAgents(obj.config.domains[''], function (err) {
+                    if (err) { addServerWarning('Unable to load the downloaded default agent files: ' + (err.message || err)); }
+                    if (state.rerun) { pass(); return; }
+                    done(err);
+                });
+            });
+        }
+        Promise.resolve(obj.agentTablesReady).then(pass, pass);
+    }
+
     // Coalesce reloads so an older hash read cannot overwrite a newer selection.
     obj.reloadMeshAgents = function (domain, func) {
         const key = domain.id || '';
@@ -3690,7 +3728,7 @@ function CreateMeshCentralServer(config, args) {
         }
         function pass() {
             state.rerun = false;
-            Promise.resolve().then(function () {
+            Promise.resolve(obj.agentActivation).then(function () {
                 if (obj.agentBuildDefaultStore) return obj.agentBuildDefaultStore.refresh(domain);
             }).then(function () {
                 obj.updateMeshAgentsTable(domain, function () {

@@ -77,6 +77,9 @@ function agentManagerKey(event, action) { if (event.key !== 'Enter') return true
 function agentManagerControl(id, label, control, note) {
     return '<div class="agent-build-field"><label for="' + id + '">' + label + '</label><div>' + control + (note ? ('<div class="agent-build-note">' + note + '</div>') : '') + '</div></div>';
 }
+function agentManagerDownloadUrl(build, file) {
+    return 'meshagents?catalog=1&build=' + encodeURIComponent(build) + '&agentid=' + file.id + '&file=' + encodeURIComponent(file.filename) + (urlargs.key ? ('&key=' + encodeURIComponent(urlargs.key)) : '');
+}
 function agentManagerCopyBuildId(button) {
     var code = button.previousElementSibling;
     function copy() {
@@ -200,8 +203,8 @@ function agentManagerDevice(nodeid) { agentManagerClose(function () { gotoDevice
 
 function agentManagerDefaultsState(result) {
     if (result.busy) return { level: '', text: "Restoring files. You can close this dialog while downloads continue." };
+    if (result.activating) return { level: '', text: "Loading the new files. Agent downloads switch over when this finishes." };
     if (result.error) return { level: 'agent-error', text: result.error };
-    if (result.restartRequired) return { level: 'agent-warn', text: "Files are ready. Restart MeshCentral to load the restored defaults." };
     if (!result.files.length) return { level: 'agent-warn', text: "No default release versions are configured. Configure a release manifest or supply local files." };
     var missing = 0, i;
     for (i = 0; i < result.files.length; i++) if (result.files[i].status !== 'Ready') missing++;
@@ -261,10 +264,13 @@ function agentManagerDefaults(retry) {
         agentManagerHtml(html);
         current.submit = (result.canManage && result.files.length) ? function () { agentManagerDefaults(true); } : null;
         if (result.busy) agentManagerButton("Restoring files...", false, '');
+        else if (result.activating) agentManagerButton("Loading files...", false, '');
         else if (current.submit) agentManagerButton("Restore missing files", true);
         else agentManagerButton("Close", true);
-        if (result.busy || (result.updates && result.updates.checking)) current.timer = setTimeout(function () { if (agentManager === current) agentManagerDefaults(false); }, 1000);
-        else if (current.refreshCatalog || result.restartRequired) { current.refreshCatalog = false; refreshAgentCatalog(); }
+        // The catalog is refreshed once the server has switched the new files in, not while it is still signing them.
+        if (result.activating) current.refreshCatalog = true;
+        if (result.busy || result.activating || (result.updates && result.updates.checking)) current.timer = setTimeout(function () { if (agentManager === current) agentManagerDefaults(false); }, 1000);
+        else if (current.refreshCatalog) { current.refreshCatalog = false; refreshAgentCatalog(); }
     }).catch(function (error) {
         if (agentManager !== current) return;
         agentManagerError(error); current.submit = function () { agentManagerDefaults(false); }; agentManagerButton("Retry", true);
@@ -439,6 +445,7 @@ function agentManagerManageForm() {
             else if (art.signed) { tags.push("Code-signed by the server"); }
             else if (art.signature && art.signature.indexOf('Present') === 0) { tags.push("Signed before upload"); }
             var meta = EscapeHtml(tags.join(', ')) + (art.agentHash ? ('<div class="agent-muted">' + "Update hash" + ' ' + EscapeHtml(art.agentHash.substring(0, 16)) + '...</div>') : '');
+            if (art.matches) meta += '<div><a download href="' + EscapeHtml(agentManagerDownloadUrl(build.id, art)) + '">' + "Download" + '</a></div>';
             fileRows += '<div class="agent-manager-row"><div><b>' + EscapeHtml(art.filename) + '</b></div><div>' + EscapeHtml(agentManagerAgentType(art.id)) + '</div><div class="agent-manager-detail">' + meta + '</div></div>';
         }
         html = '<div class="agent-hash">' + "Build ID" + ' <code class="agent-build-id">' + EscapeHtml(build.id) + '</code> <button type="button" class="agent-linkbutton" onclick="agentManagerCopyBuildId(this)">' + "Copy build ID" + '</button></div>';

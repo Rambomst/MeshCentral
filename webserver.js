@@ -6310,6 +6310,24 @@ module.exports.CreateWebServer = function (parent, db, args, certificates, doneF
             res.set('Cache-Control', 'no-store');
             res.set('Referrer-Policy', 'no-referrer');
             const key = (typeof req.query.key == 'string') ? ('&key=' + encodeURIComponent(req.query.key)) : '';
+            if ((req.query.build != null) || (req.query.default != null)) {
+                // Stored bytes, unchanged: this is what gets signed elsewhere and uploaded back as-is.
+                if (req.session.loginToken) { res.sendStatus(404); return; }
+                const agentid = parseInt((req.query.build != null) ? req.query.agentid : req.query.default);
+                if (!(agentid > 0)) { res.sendStatus(404); return; }
+                if (req.query.build != null) {
+                    agentCatalog.getArtifact(req.query.build, agentid, req.query.file, domain).then(function (file) {
+                        setContentDispositionHeader(res, 'application/octet-stream', file.artifact.filename, null, file.artifact.filename);
+                        res.send(file.data);
+                    }).catch(function () { if (!res.headersSent) res.sendStatus(404); });
+                    return;
+                }
+                const agent = (domain.meshAgentBinaries && domain.meshAgentBinaries[agentid]) || obj.parent.meshAgentBinaries[agentid];
+                if ((agent == null) || (typeof agent.path != 'string')) { res.sendStatus(404); return; }
+                setContentDispositionHeader(res, 'application/octet-stream', agent.localname, null, agent.localname);
+                res.sendFile(agent.path);
+                return;
+            }
             if (req.query.fragment != '1') { res.redirect(domain.url + '?viewmode=44' + key); return; }
             Promise.all([agentCatalog.getCatalog(domain), new Promise(function (resolve) {
                 db.GetAgentTypeCounts(domain.id, function (err, counts) { resolve(err ? null : counts); });
@@ -6320,7 +6338,7 @@ module.exports.CreateWebServer = function (parent, db, args, certificates, doneF
                 catalog.defaults.sort(function (a, b) { return b.devices - a.devices || a.id - b.id; });
                 catalog.countsAvailable = counts != null;
                 render(req, res, getRenderPage('agentcatalog', req, domain), getRenderArgs({
-                    catalog: catalog, serverVersion: parent.currentVer, lang: 'en'
+                    catalog: catalog, serverVersion: parent.currentVer, lang: 'en', catalogUrl: domain.url + 'meshagents?catalog=1' + key
                 }, req, domain), user);
             }).catch(function (err) { parent.debug('web', 'Unable to read agent catalog: ' + err.message); if (!res.headersSent) res.sendStatus(500); });
             return;
