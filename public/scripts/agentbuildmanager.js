@@ -787,16 +787,16 @@ function agentManagerImportSource() {
     agentManagerClearError();
     if (Q('agentImportSource').value === 'url') {
         html = agentManagerControl('agentImportUrl', "HTTPS URL", '<input id="agentImportUrl" type="url" maxlength="4096" autocomplete="off" oninput="agentManagerImportChanged()" onkeydown="return agentManagerKey(event, agentManagerSubmit)" />');
-        html += agentManagerControl('agentImportFilename', "Filename (optional)", '<input id="agentImportFilename" maxlength="128" onkeydown="return agentManagerKey(event, agentManagerSubmit)" />');
-        html += agentManagerControl('agentImportHash', "Expected SHA256 (optional)", '<input id="agentImportHash" maxlength="64" onkeydown="return agentManagerKey(event, agentManagerSubmit)" />');
+        html += agentManagerControl('agentImportFilename', "Filename (optional)", '<input id="agentImportFilename" type="text" maxlength="128" onkeydown="return agentManagerKey(event, agentManagerSubmit)" />');
+        html += agentManagerControl('agentImportHash', "Expected SHA256 (optional)", '<input id="agentImportHash" type="text" maxlength="64" onkeydown="return agentManagerKey(event, agentManagerSubmit)" />');
         html += '<p class="agent-muted">' + "Download an agent file or a ZIP from a public HTTPS address. Up to 128 MiB downloaded and unpacked, 16 agent files, 64 MiB per file." + '</p>';
         QH('agentImportForm', html);
         current.submit = agentManagerImportStart; agentManagerImportChanged();
         return;
     }
-    html = agentManagerControl('agentGithubRepo', "Repository", '<input id="agentGithubRepo" value="Ylianst/MeshAgent" maxlength="201" oninput="agentManagerGithubKind()" onkeydown="return agentManagerKey(event, agentManagerGithubSearch)" />');
+    html = agentManagerControl('agentGithubRepo', "Repository", '<input id="agentGithubRepo" type="text" value="Ylianst/MeshAgent" maxlength="201" oninput="agentManagerGithubKind()" onkeydown="return agentManagerKey(event, agentManagerGithubSearch)" />');
     html += agentManagerControl('agentGithubKind', "Builds", '<select id="agentGithubKind" onchange="agentManagerGithubKind()"><option value="runs">' + "Workflow runs" + '</option><option value="pull-request">' + "Pull request" + '</option><option value="releases">' + "Releases" + '</option><option value="run">' + "Run ID" + '</option></select>');
-    html += '<div id="agentGithubFilterRow">' + agentManagerControl('agentGithubFilter', '<span id="agentGithubFilterLabel">' + "Branch or commit" + '</span>', '<input id="agentGithubFilter" maxlength="200" oninput="agentManagerGithubKind()" onkeydown="return agentManagerKey(event, agentManagerGithubSearch)" />') + '</div>';
+    html += '<div id="agentGithubFilterRow">' + agentManagerControl('agentGithubFilter', '<span id="agentGithubFilterLabel">' + "Branch or commit" + '</span>', '<input id="agentGithubFilter" type="text" maxlength="200" oninput="agentManagerGithubKind()" onkeydown="return agentManagerKey(event, agentManagerGithubSearch)" />') + '</div>';
     html += '<p class="agent-muted">' + (current.githubSettings.tokenConfigured ? "GitHub token configured on the server." : "No GitHub token is configured. Public builds can be browsed, Actions downloads need a server token.") + '</p>';
     html += '<details data-agent-detail="github"><summary>' + "GitHub settings" + '</summary><p>' + "Set agentBuilds.github.token in this domain in config.json, then restart MeshCentral. Actions downloads need Actions read, private releases need Contents read, private pull request lookup needs Pull requests read." + '</p><p>' + "Only successful runs with available artifacts matching these names are listed:" + ' ' + EscapeHtml(current.githubSettings.artifactNames.join(', ')) + '</p></details>';
     html += '<div class="agent-manager-toolbar"><button type="button" onclick="agentManagerGithubSearch()">' + "Find builds" + '</button></div><div id="agentGithubResults"></div>';

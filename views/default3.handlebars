@@ -23118,9 +23118,10 @@
 
         function showAgentManagerDialog(title, size) {
             setModalContent('xxAddAgent', title, '<div id="agentManagerBody"></div>', size);
+            Q('xxAddAgentModal').classList.add('agent-manager-modal');
             showModal('xxAddAgentModal', 'idx_dlgOkButton', function () { agentManagerSubmit(); if (agentManager) xxdialogMode = 2; return false; });
             var manager = agentManager;
-            Q('xxAddAgentModal').addEventListener('hidden.bs.modal', function () { if (agentManager === manager) agentManagerClosed(); }, { once: true });
+            Q('xxAddAgentModal').addEventListener('hidden.bs.modal', function () { Q('xxAddAgentModal').classList.remove('agent-manager-modal'); if (agentManager === manager) agentManagerClosed(); }, { once: true });
         }
         function closeAgentManagerDialog(after) {
             // hideModal is animated and xxdialogMode is only cleared on hidden.bs.modal, so a caller

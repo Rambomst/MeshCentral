@@ -98,9 +98,8 @@
 #p10buildStatus { font-weight: bold; margin-top: 4px; }
 #p10buildSummary { margin-top: 6px; }
 #p10buildNotice { margin-top: 6px; border-inline-start: 3px solid var(--bs-warning-text-emphasis, #4d3300); padding-inline-start: 8px; }
-/* max-content rather than a pixel track: a translated label widens the column instead of wrapping
-   the control. One column below 700px. */
 #p10agentBuild .agent-build-field, #agentManagerBody .agent-build-field { display: grid; grid-template-columns: minmax(0, max-content) minmax(0, 1fr); align-items: baseline; gap: 4px 8px; margin: 6px 0; }
+#agentManagerBody .agent-build-field { grid-template-columns: minmax(0, 11em) minmax(0, 1fr); }
 #p10agentBuild .agent-build-field > div, #agentManagerBody .agent-build-field > div { min-width: 0; }
 #p10agentBuild select { width: 100%; min-width: 0; padding: 3px; }
 #p10agentBuild p { margin: 8px 0; }
@@ -182,6 +181,7 @@
    these children, because both hosts set max-height rather than height. */
 #agentManagerBody { display: flex; flex-direction: column; line-height: 1.4; overflow: hidden; }
 #xxAddAgentBody #agentManagerBody { max-height: calc(100vh - 240px); }
+#xxAddAgentModal.agent-manager-modal .modal-dialog { align-items: flex-start; }
 .agent-manager-dialog #agentManagerBody { max-height: calc(90vh - 110px); }
 #agentManagerHead { flex: 0 1 auto; min-height: 0; overflow-y: auto; padding-bottom: 6px; margin-bottom: 8px; border-bottom: 1px solid #8886; }
 #agentManagerContent { flex: 1 1000 auto; min-height: 6em; overflow-y: auto; overflow-wrap: anywhere; }

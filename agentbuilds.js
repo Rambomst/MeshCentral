@@ -186,7 +186,7 @@ const binary = (function () {
             warnings.push('This file contains embedded connection settings. Use an unconfigured agent file.');
             throw new Error(warnings.at(-1));
         }
-        const candidates = ids.filter(id => architectures[id] && architectures[id].update).map(id => ({ id, name: architectures[id].desc }));
+        const candidates = ids.filter(id => architectures[id]).map(id => ({ id, name: architectures[id].desc }));
         if (!candidates.length) throw new Error('No supported MeshAgent type matches this executable.');
         const digest = crypto.createHash('sha384');
         if (checksum) digest.update(data.subarray(0, checksum)).update(Buffer.alloc(4)).update(data.subarray(checksum + 4, table)).update(Buffer.alloc(8)).update(data.subarray(table + 8, end));
