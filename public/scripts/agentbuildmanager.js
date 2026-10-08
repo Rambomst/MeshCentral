@@ -430,6 +430,8 @@ function agentManagerManageForm() {
         var build = data.builds.filter(function (x) { return x.id === agentManager.build; })[0], options, html;
         if (!build) { agentManagerError("This build is no longer in the catalog."); agentManager.submit = null; agentManagerButton("Close", true); return; }
         agentManager.buildInfo = build;
+        agentManager.overrideFolder = data.overrideFolder;
+        agentManager.overridden = (data.defaults || []).filter(function (x) { return x.override && build.artifacts.some(function (a) { return a.matches && a.id === x.id; }); }).map(function (x) { return x.filename; });
         var isDefault = (data.defaults || []).some(function (x) { return x.defaultBuild && x.defaultBuild.id === build.id; });
         var canDefault = !build.archived && build.artifacts.some(function (x) { return x.matches; });
         agentManagerSubject(build.name, build.channel + ' / ' + build.artifacts.length + ' ' + "agent files" + (build.archived ? (' / ' + "Archived") : ''));
@@ -471,7 +473,9 @@ function agentManagerManageChanged() {
         setdefault: "Agent downloads will serve this build's files immediately. Devices following the default may update on reconnect.",
         cleardefault: "Removes this build selection. These agent types fall back to the remaining server, domain, release or bundled defaults. Devices following the default may update on reconnect."
     };
-    agentBuildHtml('agentManageNote', '<p class="' + ((action === 'remove' || action === 'setdefault') ? 'agent-warn' : 'agent-muted') + '">' + notes[action] + '</p>');
+    var html = '<p class="' + ((action === 'remove' || action === 'setdefault') ? 'agent-warn' : 'agent-muted') + '">' + notes[action] + '</p>';
+    if ((action === 'setdefault') && agentManager.overridden && agentManager.overridden.length) html += '<p class="agent-warn">' + EscapeHtml(format("Agent files in {0} take priority over this build for: {1}", agentManager.overrideFolder, agentManager.overridden.join(', '))) + '</p>';
+    agentBuildHtml('agentManageNote', html);
     if (Q('agentManageConfirmDefault')) {
         Q('agentManageConfirmDefault').checked = false;
         QV('agentManageDefaultWarning', action === 'remove');
@@ -935,7 +939,7 @@ function agentManagerImportProvenance(source) {
     if (source.repository) html += '<b>' + EscapeHtml(source.repository) + '</b>';
     if (source.url) html += '<div class="agent-hash">' + EscapeHtml(source.url) + '</div>';
     if (source.commit) html += '<div class="agent-hash">' + "Source commit" + ': <code>' + EscapeHtml(source.commit) + '</code></div>';
-    if (source.runId) html += '<div>' + EscapeHtml([source.event, source.branch, source.headRepository, 'Run ' + source.runId, 'Attempt ' + source.runAttempt].filter(Boolean).join(' / ')) + '</div>';
+    if (source.runId) html += '<div>' + EscapeHtml([source.event, source.branch, source.headRepository, format("Run {0}", source.runId), source.runAttempt && format("Attempt {0}", source.runAttempt)].filter(Boolean).join(' / ')) + '</div>';
     if (source.tag) html += '<div>' + "Tag" + ': ' + EscapeHtml(source.tag) + '</div>';
     if (source.downloads) for (i = 0; i < source.downloads.length; i++) {
         file = source.downloads[i];

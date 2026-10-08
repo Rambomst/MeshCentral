@@ -3769,8 +3769,11 @@ function CreateMeshCentralServer(config, args) {
         for (var archid in obj.meshAgentsArchitectureNumbers) {
             var agentpath;
             const buildDefault = obj.agentBuildDefaults && obj.agentBuildDefaults[domain.id] && obj.agentBuildDefaults[domain.id][archid];
-            // An admin-selected build takes precedence over manual agents-folder overrides.
-            if (buildDefault) {
+            const override = obj.path.join(obj.datapath, 'agents' + suffix, obj.meshAgentsArchitectureNumbers[archid].localname);
+            // Files placed in "meshcentral-data/agents" keep precedence over builds selected in the catalog, so existing setups keep serving them.
+            if (((domain.id != '') || (obj.meshAgentsArchitectureNumbers[archid].unsigned !== true)) && obj.fs.existsSync(override)) {
+                agentpath = override;
+            } else if (buildDefault) {
                 agentpath = buildDefault.path;
             } else if (domain.id == '') {
                 // Load all agents when processing the default domain
@@ -3779,13 +3782,10 @@ function CreateMeshCentralServer(config, args) {
                     const agentpath2 = obj.path.join(obj.datapath, 'signedagents' + suffix, obj.meshAgentsArchitectureNumbers[archid].localname);
                     // A failed signing attempt must not reuse a copy from another release.
                     if (agentpath && obj.fs.existsSync(agentpath2) && ((obj.signedAgentSources || {})[archid] === agentpath)) { agentpath = agentpath2; }
-                    const agentpath3 = obj.path.join(obj.datapath, 'agents' + suffix, obj.meshAgentsArchitectureNumbers[archid].localname);
-                    if (obj.fs.existsSync(agentpath3)) { agentpath = agentpath3; } // If the agent is present in "meshcentral-data/agents", use that one instead.
                 }
             } else {
                 // When processing an extra domain, only load agents that are specific to that domain
-                agentpath = obj.path.join(obj.datapath, 'agents' + suffix, obj.meshAgentsArchitectureNumbers[archid].localname);
-                if (!obj.fs.existsSync(agentpath)) continue;
+                continue;
             }
 
             if (!agentpath) continue;
@@ -3800,10 +3800,10 @@ function CreateMeshCentralServer(config, args) {
             agentTable[archid] = Object.assign({}, obj.meshAgentsArchitectureNumbers[archid]);
             if (domain.id != '') delete agentTable[archid].codesign;
             agentTable[archid].path = agentpath;
-            if (buildDefault && (typeof buildDefault.customized == 'boolean')) { agentTable[archid].customized = buildDefault.customized; }
+            const fromBuild = !!buildDefault && (agentpath === buildDefault.path);
+            if (fromBuild && (typeof buildDefault.customized == 'boolean')) { agentTable[archid].customized = buildDefault.customized; }
             const release = obj.agentDefaults && obj.agentDefaults.info(obj.meshAgentsArchitectureNumbers[archid].localname);
-            const override = obj.path.join(obj.datapath, 'agents' + suffix, obj.meshAgentsArchitectureNumbers[archid].localname);
-            if (release && !buildDefault && domain.id === '' && agentpath !== override) agentTable[archid].release = release;
+            if (release && !fromBuild && domain.id === '' && agentpath !== override) agentTable[archid].release = release;
             agentTable[archid].url = 'http://' + obj.certificates.CommonName + ':' + ((typeof obj.args.aliasport == 'number') ? obj.args.aliasport : obj.args.port) + '/meshagents?id=' + archid;
             agentTable[archid].size = stats.size;
             if ((agentInfo[archid] != null) && (agentInfo[archid].mtime != null)) { agentTable[archid].mtime = new Date(agentInfo[archid].mtime); } // Set agent time if available

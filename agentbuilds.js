@@ -691,6 +691,7 @@ function CreateAgentBuildUsage(parent, db) {
             const build = catalog.builds.find(x => x.id === record.build);
             file.defaultBuild = { id: record.build, name: build ? build.name : (record.name || record.build), filename: record.filename };
             if (!((parent.parent.agentBuildDefaults || {})[domain.id] || {})[record.agentId]) file.defaultBuild.unavailable = true;
+            else if (file.override) file.defaultBuild.overridden = true;
         }
         for (const file of catalog.defaults) file.usage = counts(rows, { hash: file.agentHash, agentId: file.id });
         for (const build of catalog.builds) for (const file of build.artifacts) file.usage = counts(rows, { hash: file.agentHash, agentId: file.id, build: build.id, filename: file.filename });
@@ -1684,6 +1685,7 @@ function CreateAgentCatalog(parent, directory) {
         const defaults = [], bundled = [], builds = [], errors = [];
         const architectures = parent.meshAgentsArchitectureNumbers;
         const active = Object.assign({}, parent.meshAgentBinaries, domain.meshAgentBinaries);
+        const overrides = path.resolve(parent.datapath, 'agents' + (domain.id ? '-' + domain.id : ''));
         for (const id of Object.keys(active).sort((a, b) => a - b)) {
             if (agentId != null) continue;
             if (Number(id) >= 10000) continue;
@@ -1694,7 +1696,7 @@ function CreateAgentCatalog(parent, directory) {
             else if (path.dirname(path.resolve(agent.path)) == path.resolve(parent.datapath, 'signedagents')) { source = 'Server signed'; }
             else if (agent.release) { source = 'Release'; }
             else if (path.dirname(path.resolve(agent.path)) == path.resolve(parent.datapath, 'agentbuilds')) { source = 'Local file'; }
-            defaults.push({ id: Number(id), name: agent.desc, filename: agent.localname, source: source, size: agent.size, agentHash: agent.hashhex, release: agent.release });
+            defaults.push({ id: Number(id), name: agent.desc, filename: agent.localname, source: source, size: agent.size, agentHash: agent.hashhex, release: agent.release, override: path.dirname(path.resolve(agent.path)) == overrides });
         }
         for (const id of Object.keys(architectures).sort((a, b) => a - b)) {
             if (agentId != null) continue;
@@ -1705,9 +1707,10 @@ function CreateAgentCatalog(parent, directory) {
             if (file.status == 'Missing file') continue;
             bundled.push(Object.assign({ id: Number(id), name: agent.desc, filename: agent.localname }, file));
         }
+        const overrideFolder = defaults.some(x => x.override) ? path.join(path.basename(parent.datapath), path.basename(overrides)) : null;
         let directories;
         try { directories = await buildDirectories(domain); }
-        catch (ex) { return { defaults: defaults, bundled: bundled, builds: builds, errors: ['Unable to read agent directory'] }; }
+        catch (ex) { return { defaults: defaults, bundled: bundled, builds: builds, errors: ['Unable to read agent directory'], overrideFolder: overrideFolder }; }
         const buildIds = new Set();
         for (const entry of directories.sort((a, b) => a.name.localeCompare(b.name))) {
             const manifestPath = path.join(entry.path, 'manifest.json');
@@ -1753,7 +1756,7 @@ function CreateAgentCatalog(parent, directory) {
             }
             if (build.artifacts.length) builds.push(build);
         }
-        return { defaults: defaults, bundled: bundled, builds: builds, errors: errors, downloads: parent.agentDefaults ? parent.agentDefaults.status() : null };
+        return { defaults: defaults, bundled: bundled, builds: builds, errors: errors, downloads: parent.agentDefaults ? parent.agentDefaults.status() : null, overrideFolder: overrideFolder };
     }
 
     async function getArtifact(buildId, agentId, selectedFile, domain = {}) {
