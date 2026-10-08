@@ -36,7 +36,7 @@ const storage = {
     domainKey: domain => crypto.createHash('sha256').update(domain.id || '').digest('hex')
 };
 
-// Native executable inspection (ELF, PE, Mach-O)
+// Agent file inspection (ELF, PE, Mach-O and Android APK)
 const binary = (function () {
     const policyGuids = ['b996015880544a19b7f7e9be44914c18', 'b996015880544a19b7f7e9be44914c19'];
 
@@ -180,7 +180,23 @@ const binary = (function () {
                 p += length;
             }
             if (p !== start + size) throw new Error('Invalid Mach-O command count.');
-        } else { throw new Error('Use a native ELF, PE or Mach-O agent file. Archives and universal agent files are not supported.'); }
+        } else if (data.readUInt32LE(0) === 0x04034b50) {
+            // An APK is a ZIP file, so it is recognised from its central directory rather than unpacked.
+            const eocd = data.lastIndexOf('PK\x05\x06', data.length - 22);
+            if (eocd < 0 || eocd < data.length - 65557 || eocd + 22 + u16(eocd + 20) !== data.length) throw new Error('Invalid APK archive.');
+            const count = u16(eocd + 10), size = u32(eocd + 12), offset = u32(eocd + 16), names = new Set();
+            if (offset + size > eocd) throw new Error('Invalid APK archive.');
+            for (let i = 0, p = offset; i < count; i++) {
+                if (p + 46 > offset + size || u32(p) !== 0x02014b50 || p + 46 + u16(p + 28) > offset + size) throw new Error('Invalid APK central directory.');
+                names.add(data.toString('utf8', p + 46, p + 46 + u16(p + 28)));
+                p += 46 + u16(p + 28) + u16(p + 30) + u16(p + 32);
+            }
+            if (!names.has('AndroidManifest.xml') || !names.has('classes.dex')) throw new Error('Use a native ELF, PE or Mach-O agent file, or an Android APK. Other archives and universal agent files are not supported.');
+            if (data.toString('latin1', Math.max(0, offset - 16), offset) !== 'APK Sig Block 42' && !Array.from(names).some(x => /^META-INF\/[^/]+\.(RSA|DSA|EC)$/i.test(x))) throw new Error('Use a signed Android APK.');
+            const abis = Array.from(new Set(Array.from(names).filter(x => /^lib\/[^/]+\/[^/]+\.so$/.test(x)).map(x => x.split('/')[1]))).sort();
+            platform = 'android'; cpu = abis.length ? abis.join(', ') : 'any'; ids = [14];
+            metadata.embeddedSignature = 'Present, trust not verified';
+        } else { throw new Error('Use a native ELF, PE or Mach-O agent file, or an Android APK. Other archives and universal agent files are not supported.'); }
         if (!platform || !cpu || !ids.length) throw new Error('This executable architecture is not supported.');
         if (policyGuids.includes(data.subarray(-16).toString('hex'))) {
             warnings.push('This file contains embedded connection settings. Use an unconfigured agent file.');
@@ -224,6 +240,9 @@ const archive = (function () {
                 return data;
             };
             zip = new ZipReader(reader, { useWebWorkers: false });
+            // An APK is itself the agent file, and it has far more entries than the unpack budget allows.
+            const listing = await zip.getEntries();
+            if (listing.some(x => x.filename === 'AndroidManifest.xml') && listing.some(x => x.filename === 'classes.dex')) return null;
             const files = [], skipped = [], names = new Set();
             for await (const entry of zip.getEntriesGenerator()) {
                 if (signal.aborted) throw new Error('Import cancelled or timed out.');
@@ -499,8 +518,9 @@ function CreateAgentReleaseUpdates(settings, client, entries) {
     }
     function latest(releases, repository) {
         if (!Array.isArray(releases)) throw new Error('Invalid GitHub release response.');
+        // Releases from before the fixed asset names, such as the versioned-only Android APKs, carry none of these files.
         const candidates = releases.filter(release => release && !release.draft && !release.prerelease && version(release.tag_name) &&
-            Array.isArray(release.assets) && release.assets.some(asset => asset.name === 'agent-release.json' && asset.size > 0));
+            Array.isArray(release.assets) && release.assets.some(asset => asset && asset.size > 0 && repository.files.has(asset.name)));
         candidates.sort((a, b) => compare(version(b.tag_name), version(a.tag_name)));
         if (!candidates.length) return null;
         const release = candidates[0], tag = release.tag_name;

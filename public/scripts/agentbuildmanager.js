@@ -225,7 +225,7 @@ function agentManagerDefaultsReleases(result) {
             state = '<span class="' + (repository.latest.updateAvailable ? 'agent-warn' : 'agent-match') + '">' + (repository.latest.updateAvailable ? "Release available" : "Latest stable release") + '</span>';
             detail += '<div><a href="' + EscapeHtml(repository.latest.sourceUrl) + '" target="_blank" rel="noopener noreferrer">' + EscapeHtml(repository.latest.tag) + '</a></div>';
             if (repository.latest.updateAvailable) detail += '<div>' + "Import this release to review its files and test it on selected devices." + '</div>';
-        } else detail += '<div>' + (repository.lastSuccess ? "No stable release with an agent manifest was found." : "Not checked") + '</div>';
+        } else detail += '<div>' + (repository.lastSuccess ? "No stable release containing the default agent files was found." : "Not checked") + '</div>';
         if (repository.lastSuccess) detail += '<div class="agent-muted">' + "Last successful check" + ': ' + printDateTime(new Date(repository.lastSuccess)) + '</div>';
         if (repository.error) detail += '<div class="agent-error">' + EscapeHtml(repository.error) + '</div>';
         html += '<div class="agent-manager-row"><div><b>' + EscapeHtml(repository.repository) + '</b></div><div>' + state + '</div><div class="agent-manager-detail">' + detail + '</div></div>';
@@ -794,31 +794,45 @@ function agentManagerImportSource() {
         current.submit = agentManagerImportStart; agentManagerImportChanged();
         return;
     }
-    html = agentManagerControl('agentGithubRepo', "Repository", '<input id="agentGithubRepo" type="text" value="Ylianst/MeshAgent" maxlength="201" oninput="agentManagerGithubKind()" onkeydown="return agentManagerKey(event, agentManagerGithubSearch)" />');
-    html += agentManagerControl('agentGithubKind', "Builds", '<select id="agentGithubKind" onchange="agentManagerGithubKind()"><option value="runs">' + "Workflow runs" + '</option><option value="pull-request">' + "Pull request" + '</option><option value="releases">' + "Releases" + '</option><option value="run">' + "Run ID" + '</option></select>');
+    html = agentManagerControl('agentGithubRepo', "Repository", '<select id="agentGithubRepo" onchange="agentManagerGithubRepoChanged()"><option value="Ylianst/MeshAgent">Ylianst/MeshAgent</option><option value="Ylianst/MeshCentralAndroidAgent">Ylianst/MeshCentralAndroidAgent</option><option value="">' + "Custom" + '</option></select>');
+    html += '<div id="agentGithubCustomRow" style="display:none">' + agentManagerControl('agentGithubCustom', "Custom repository", '<input id="agentGithubCustom" type="text" maxlength="201" placeholder="' + "owner/repository" + '" oninput="agentManagerGithubKind()" onkeydown="return agentManagerKey(event, agentManagerGithubSearch)" />') + '</div>';
+    html += agentManagerControl('agentGithubKind', "Builds", '<select id="agentGithubKind" onchange="agentManagerGithubKind()"><option value="releases">' + "Releases" + '</option><option value="runs">' + "Workflow runs" + '</option><option value="pull-request">' + "Pull request" + '</option><option value="run">' + "Run ID" + '</option></select>');
     html += '<div id="agentGithubFilterRow">' + agentManagerControl('agentGithubFilter', '<span id="agentGithubFilterLabel">' + "Branch or commit" + '</span>', '<input id="agentGithubFilter" type="text" maxlength="200" oninput="agentManagerGithubKind()" onkeydown="return agentManagerKey(event, agentManagerGithubSearch)" />') + '</div>';
     html += '<p class="agent-muted">' + (current.githubSettings.tokenConfigured ? "GitHub token configured on the server." : "No GitHub token is configured. Public builds can be browsed, Actions downloads need a server token.") + '</p>';
     html += '<details data-agent-detail="github"><summary>' + "GitHub settings" + '</summary><p>' + "Set agentBuilds.github.token in this domain in config.json, then restart MeshCentral. Actions downloads need Actions read, private releases need Contents read, private pull request lookup needs Pull requests read." + '</p><p>' + "Only successful runs with available artifacts matching these names are listed:" + ' ' + EscapeHtml(current.githubSettings.artifactNames.join(', ')) + '</p></details>';
     html += '<div class="agent-manager-toolbar"><button type="button" onclick="agentManagerGithubSearch()">' + "Find builds" + '</button></div><div id="agentGithubResults"></div>';
     QH('agentImportForm', html);
-    current.submit = agentManagerGithubSearch; agentManagerButton("Find builds", true);
+    agentManagerGithubKind();
 }
 function agentManagerImportChanged() {
     agentManager.focus = 'agentImportUrl';
     agentManagerButton("Download and review", /^https:\/\/\S+$/.test(Q('agentImportUrl').value.trim()), "Enter the HTTPS address of the agent file or ZIP to download.");
 }
-function agentManagerGithubSearch() { agentManager.trail = ''; agentManagerGithubBrowse(1); }
+function agentManagerGithubSearch() {
+    if (!agentManagerGithubRepo()) { Q('agentGithubCustom').focus(); return; }
+    agentManager.trail = ''; agentManagerGithubBrowse(1);
+}
+function agentManagerGithubRepo() {
+    var repository = Q('agentGithubRepo').value || Q('agentGithubCustom').value.trim();
+    return /^[^\/\s]+\/[^\/\s]+$/.test(repository) ? repository : '';
+}
+function agentManagerGithubRepoChanged() {
+    var custom = (Q('agentGithubRepo').value === '');
+    QV('agentGithubCustomRow', custom);
+    agentManagerGithubKind();
+    if (custom) Q('agentGithubCustom').focus();
+}
 function agentManagerGithubKind() {
-    var current = agentManager, kind = Q('agentGithubKind').value;
+    var current = agentManager, kind = Q('agentGithubKind').value, ready = !!agentManagerGithubRepo();
     current.serial = (current.serial || 0) + 1; current.busy = false; current.selection = null; current.trail = '';
     QV('agentGithubFilterRow', kind !== 'releases');
     QH('agentGithubFilterLabel', (kind === 'pull-request') ? "PR number" : ((kind === 'run') ? "Run ID" : "Branch or commit"));
     agentBuildHtml('agentGithubResults', '');
-    current.submit = agentManagerGithubSearch; agentManagerButton("Find builds", true);
+    current.submit = agentManagerGithubSearch; current.focus = ready ? '' : 'agentGithubCustom'; agentManagerButton("Find builds", ready, "Enter a GitHub repository as owner/repository.");
 }
 function agentManagerGithubBrowse(page, selection) {
     var current = agentManager, seq = current.serial = (current.serial || 0) + 1;
-    var request = { op: 'browse', repository: Q('agentGithubRepo').value.trim(), kind: Q('agentGithubKind').value, filter: Q('agentGithubFilter').value.trim(), page: page };
+    var request = { op: 'browse', repository: agentManagerGithubRepo(), kind: Q('agentGithubKind').value, filter: Q('agentGithubFilter').value.trim(), page: page };
     if (selection) Object.assign(request, selection);
     current.selection = null; current.busy = true; agentManagerClearError();
     agentManagerButton("Loading...", false, '');

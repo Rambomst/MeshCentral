@@ -12150,7 +12150,7 @@
     {
       "en": "Back to builds",
       "xloc": [
-        "agentbuildmanager.js->0->288"
+        "agentbuildmanager.js->0->291"
       ]
     },
     {
@@ -12977,8 +12977,8 @@
     {
       "en": "Branch or commit",
       "xloc": [
-        "agentbuildmanager.js->0->271",
-        "agentbuildmanager.js->0->283"
+        "agentbuildmanager.js->0->274",
+        "agentbuildmanager.js->0->285"
       ]
     },
     {
@@ -13289,7 +13289,7 @@
     {
       "en": "Builds",
       "xloc": [
-        "agentbuildmanager.js->0->266"
+        "agentbuildmanager.js->0->269"
       ]
     },
     {
@@ -17443,13 +17443,13 @@
     {
       "en": "Configure a GitHub token on the server to download these files.",
       "xloc": [
-        "agentbuildmanager.js->0->293"
+        "agentbuildmanager.js->0->296"
       ]
     },
     {
       "en": "Configure a GitHub token on the server to download workflow artifacts.",
       "xloc": [
-        "agentbuildmanager.js->0->308"
+        "agentbuildmanager.js->0->311"
       ]
     },
     {
@@ -21152,6 +21152,18 @@
       "en": "Current server default",
       "xloc": [
         "agentbuildmanager.js->0->168"
+      ]
+    },
+    {
+      "en": "Custom",
+      "xloc": [
+        "agentbuildmanager.js->0->266"
+      ]
+    },
+    {
+      "en": "Custom repository",
+      "xloc": [
+        "agentbuildmanager.js->0->267"
       ]
     },
     {
@@ -27223,7 +27235,7 @@
     {
       "en": "Download SHA256 verified",
       "xloc": [
-        "agentbuildmanager.js->0->321"
+        "agentbuildmanager.js->0->324"
       ]
     },
     {
@@ -27277,8 +27289,8 @@
     {
       "en": "Download and review",
       "xloc": [
-        "agentbuildmanager.js->0->279",
-        "agentbuildmanager.js->0->309"
+        "agentbuildmanager.js->0->281",
+        "agentbuildmanager.js->0->312"
       ]
     },
     {
@@ -27804,13 +27816,13 @@
     {
       "en": "Downloading {0} ({1} of {2})",
       "xloc": [
-        "agentbuildmanager.js->0->318"
+        "agentbuildmanager.js->0->321"
       ]
     },
     {
       "en": "Downloading...",
       "xloc": [
-        "agentbuildmanager.js->0->312"
+        "agentbuildmanager.js->0->315"
       ]
     },
     {
@@ -31045,6 +31057,12 @@
       ]
     },
     {
+      "en": "Enter a GitHub repository as owner/repository.",
+      "xloc": [
+        "agentbuildmanager.js->0->287"
+      ]
+    },
+    {
       "en": "Enter a build name.",
       "xloc": [
         "agentbuildmanager.js->0->124"
@@ -31202,7 +31220,7 @@
     {
       "en": "Enter the HTTPS address of the agent file or ZIP to download.",
       "xloc": [
-        "agentbuildmanager.js->0->280"
+        "agentbuildmanager.js->0->282"
       ]
     },
     {
@@ -33150,7 +33168,7 @@
     {
       "en": "Files are inspected before you can add this build. Closing this dialog cancels the import.",
       "xloc": [
-        "agentbuildmanager.js->0->311"
+        "agentbuildmanager.js->0->314"
       ]
     },
     {
@@ -33334,10 +33352,9 @@
     {
       "en": "Find builds",
       "xloc": [
-        "agentbuildmanager.js->0->277",
-        "agentbuildmanager.js->0->278",
-        "agentbuildmanager.js->0->284",
-        "agentbuildmanager.js->0->298"
+        "agentbuildmanager.js->0->280",
+        "agentbuildmanager.js->0->286",
+        "agentbuildmanager.js->0->301"
       ]
     },
     {
@@ -35743,13 +35760,13 @@
     {
       "en": "GitHub settings",
       "xloc": [
-        "agentbuildmanager.js->0->274"
+        "agentbuildmanager.js->0->277"
       ]
     },
     {
       "en": "GitHub token configured on the server.",
       "xloc": [
-        "agentbuildmanager.js->0->272"
+        "agentbuildmanager.js->0->275"
       ]
     },
     {
@@ -39438,7 +39455,7 @@
       "en": "Import agent build",
       "xloc": [
         "agentbuildmanager.js->0->257",
-        "agentbuildmanager.js->0->287",
+        "agentbuildmanager.js->0->290",
         "agentbuildmanager.js->0->36"
       ]
     },
@@ -39483,7 +39500,7 @@
     {
       "en": "Import stopped.",
       "xloc": [
-        "agentbuildmanager.js->0->313"
+        "agentbuildmanager.js->0->316"
       ]
     },
     {
@@ -39987,7 +40004,7 @@
     {
       "en": "Inspecting files...",
       "xloc": [
-        "agentbuildmanager.js->0->317",
+        "agentbuildmanager.js->0->320",
         "agentbuildmanager.js->0->94"
       ]
     },
@@ -47319,7 +47336,7 @@
     {
       "en": "Loading GitHub builds...",
       "xloc": [
-        "agentbuildmanager.js->0->286"
+        "agentbuildmanager.js->0->289"
       ]
     },
     {
@@ -47561,7 +47578,7 @@
       "zh-cht": "載入中...",
       "xloc": [
         "agentbuildmanager.js->0->255",
-        "agentbuildmanager.js->0->285",
+        "agentbuildmanager.js->0->288",
         "agentbuildmanager.js->0->45",
         "agentbuildmanager.js->0->66",
         "default-mobile.handlebars->55->106",
@@ -54537,7 +54554,7 @@
     {
       "en": "Next",
       "xloc": [
-        "agentbuildmanager.js->0->297",
+        "agentbuildmanager.js->0->300",
         "agentbuildmanager.js->0->6"
       ]
     },
@@ -54939,7 +54956,7 @@
     {
       "en": "No GitHub token is configured. Public builds can be browsed, Actions downloads need a server token.",
       "xloc": [
-        "agentbuildmanager.js->0->273"
+        "agentbuildmanager.js->0->276"
       ]
     },
     {
@@ -55757,7 +55774,7 @@
     {
       "en": "No agent file is available for this build.",
       "xloc": [
-        "agentbuildmanager.js->0->289"
+        "agentbuildmanager.js->0->292"
       ]
     },
     {
@@ -56285,7 +56302,7 @@
     {
       "en": "No expected digest supplied",
       "xloc": [
-        "agentbuildmanager.js->0->322"
+        "agentbuildmanager.js->0->325"
       ]
     },
     {
@@ -56858,10 +56875,13 @@
       ]
     },
     {
-      "en": "No stable release with an agent manifest was found.",
+      "en": "No stable release containing the default agent files was found.",
       "xloc": [
         "agentbuildmanager.js->0->62"
       ]
+    },
+    {
+      "en": "No stable release with an agent manifest was found."
     },
     {
       "en": "No store apps found",
@@ -56926,7 +56946,7 @@
     {
       "en": "No successful run with matching, unexpired agent artifacts on this page.",
       "xloc": [
-        "agentbuildmanager.js->0->291"
+        "agentbuildmanager.js->0->294"
       ]
     },
     {
@@ -57855,7 +57875,7 @@
     {
       "en": "Nothing was added to the catalog. Try again or close this dialog.",
       "xloc": [
-        "agentbuildmanager.js->0->314"
+        "agentbuildmanager.js->0->317"
       ]
     },
     {
@@ -58874,7 +58894,7 @@
     {
       "en": "Only successful runs with available artifacts matching these names are listed:",
       "xloc": [
-        "agentbuildmanager.js->0->276"
+        "agentbuildmanager.js->0->279"
       ]
     },
     {
@@ -59623,7 +59643,7 @@
     {
       "en": "PR number",
       "xloc": [
-        "agentbuildmanager.js->0->281"
+        "agentbuildmanager.js->0->283"
       ]
     },
     {
@@ -59754,7 +59774,7 @@
     {
       "en": "Page {0}",
       "xloc": [
-        "agentbuildmanager.js->0->296"
+        "agentbuildmanager.js->0->299"
       ]
     },
     {
@@ -59790,7 +59810,7 @@
     {
       "en": "Pages",
       "xloc": [
-        "agentbuildmanager.js->0->294",
+        "agentbuildmanager.js->0->297",
         "agentbuildmanager.js->0->3"
       ]
     },
@@ -62649,7 +62669,7 @@
     {
       "en": "Previous",
       "xloc": [
-        "agentbuildmanager.js->0->295",
+        "agentbuildmanager.js->0->298",
         "agentbuildmanager.js->0->4"
       ]
     },
@@ -63365,8 +63385,8 @@
     {
       "en": "Pull request",
       "xloc": [
-        "agentbuildmanager.js->0->268",
-        "agentbuildmanager.js->0->301"
+        "agentbuildmanager.js->0->272",
+        "agentbuildmanager.js->0->304"
       ]
     },
     {
@@ -65858,7 +65878,7 @@
     {
       "en": "Release files",
       "xloc": [
-        "agentbuildmanager.js->0->305"
+        "agentbuildmanager.js->0->308"
       ]
     },
     {
@@ -65870,8 +65890,8 @@
     {
       "en": "Releases",
       "xloc": [
-        "agentbuildmanager.js->0->269",
-        "agentbuildmanager.js->0->302"
+        "agentbuildmanager.js->0->270",
+        "agentbuildmanager.js->0->305"
       ]
     },
     {
@@ -69211,8 +69231,8 @@
     {
       "en": "Resolving download...",
       "xloc": [
-        "agentbuildmanager.js->0->310",
-        "agentbuildmanager.js->0->316"
+        "agentbuildmanager.js->0->313",
+        "agentbuildmanager.js->0->319"
       ]
     },
     {
@@ -69488,7 +69508,7 @@
       "en": "Retry",
       "xloc": [
         "agentbuildmanager.js->0->256",
-        "agentbuildmanager.js->0->299",
+        "agentbuildmanager.js->0->302",
         "agentbuildmanager.js->0->79"
       ]
     },
@@ -69913,9 +69933,9 @@
     {
       "en": "Run ID",
       "xloc": [
-        "agentbuildmanager.js->0->270",
-        "agentbuildmanager.js->0->282",
-        "agentbuildmanager.js->0->303"
+        "agentbuildmanager.js->0->273",
+        "agentbuildmanager.js->0->284",
+        "agentbuildmanager.js->0->306"
       ]
     },
     {
@@ -72798,7 +72818,7 @@
     {
       "en": "Select at most 16 agent files.",
       "xloc": [
-        "agentbuildmanager.js->0->307",
+        "agentbuildmanager.js->0->310",
         "agentbuildmanager.js->0->88"
       ]
     },
@@ -72835,7 +72855,7 @@
     {
       "en": "Select the agent files to download.",
       "xloc": [
-        "agentbuildmanager.js->0->306"
+        "agentbuildmanager.js->0->309"
       ]
     },
     {
@@ -75190,7 +75210,7 @@
     {
       "en": "Set agentBuilds.github.token in this domain in config.json, then restart MeshCentral. Actions downloads need Actions read, private releases need Contents read, private pull request lookup needs Pull requests read.",
       "xloc": [
-        "agentbuildmanager.js->0->275"
+        "agentbuildmanager.js->0->278"
       ]
     },
     {
@@ -77976,7 +77996,7 @@
     {
       "en": "Source commit",
       "xloc": [
-        "agentbuildmanager.js->0->319"
+        "agentbuildmanager.js->0->322"
       ]
     },
     {
@@ -77994,7 +78014,7 @@
     {
       "en": "Source details describe where the files were obtained. They do not prove which source code the agent file contains or that it is safe to run.",
       "xloc": [
-        "agentbuildmanager.js->0->323"
+        "agentbuildmanager.js->0->326"
       ]
     },
     {
@@ -81280,7 +81300,7 @@
     {
       "en": "Tag",
       "xloc": [
-        "agentbuildmanager.js->0->320"
+        "agentbuildmanager.js->0->323"
       ]
     },
     {
@@ -82924,7 +82944,7 @@
     {
       "en": "This repository has no release on this page. Try Workflow runs.",
       "xloc": [
-        "agentbuildmanager.js->0->290"
+        "agentbuildmanager.js->0->293"
       ]
     },
     {
@@ -84778,7 +84798,7 @@
     {
       "en": "Try again",
       "xloc": [
-        "agentbuildmanager.js->0->315"
+        "agentbuildmanager.js->0->318"
       ]
     },
     {
@@ -84869,7 +84889,7 @@
     {
       "en": "Try the next page.",
       "xloc": [
-        "agentbuildmanager.js->0->292"
+        "agentbuildmanager.js->0->295"
       ]
     },
     {
@@ -93110,14 +93130,14 @@
     {
       "en": "Workflow run files",
       "xloc": [
-        "agentbuildmanager.js->0->304"
+        "agentbuildmanager.js->0->307"
       ]
     },
     {
       "en": "Workflow runs",
       "xloc": [
-        "agentbuildmanager.js->0->267",
-        "agentbuildmanager.js->0->300"
+        "agentbuildmanager.js->0->271",
+        "agentbuildmanager.js->0->303"
       ]
     },
     {
@@ -95877,6 +95897,12 @@
       "zh-cht": "其他",
       "xloc": [
         "player.handlebars->31->8"
+      ]
+    },
+    {
+      "en": "owner/repository",
+      "xloc": [
+        "agentbuildmanager.js->0->268"
       ]
     },
     {
