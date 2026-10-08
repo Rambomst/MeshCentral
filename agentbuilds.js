@@ -73,7 +73,7 @@ const binary = (function () {
             const phoff = word(wide ? 32 : 28), phsize = u16(wide ? 54 : 42), phnum = u16(wide ? 56 : 44), loads = [];
             if (!phnum || phnum > 1024 || phsize < (wide ? 56 : 32)) throw new Error('Invalid ELF program headers.');
             range(phoff, phsize * phnum);
-            let dynamic;
+            let dynamic, openbsd = false;
             for (let i = 0; i < phnum; i++) {
                 const p = phoff + i * phsize, type = u32(p), offset = word(p + (wide ? 8 : 4)), size = word(p + (wide ? 32 : 16));
                 range(offset, size);
@@ -85,11 +85,13 @@ const binary = (function () {
                         const names = u32(n), desc = u32(n + 4), kind = u32(n + 8), next = n + 12 + Math.ceil(names / 4) * 4 + Math.ceil(desc / 4) * 4;
                         if (next > offset + size || next <= n) throw new Error('Invalid ELF note.');
                         if (names === 8 && data.toString('ascii', n + 12, n + 19) === 'FreeBSD' && kind === 1 && desc === 4) metadata.freebsdAbi = u32(n + 20);
+                        if (names === 8 && data.toString('ascii', n + 12, n + 19) === 'OpenBSD' && kind === 1) openbsd = true;
                         n = next;
                     }
                 }
             }
-            platform = data[7] === 9 || metadata.freebsdAbi || metadata.interpreter === '/libexec/ld-elf.so.1' ? 'freebsd' : ([0, 3].includes(data[7]) ? 'linux' : null);
+            // OpenBSD executables keep the System V ABI byte, so only their ident note tells them apart from Linux.
+            platform = data[7] === 9 || metadata.freebsdAbi || metadata.interpreter === '/libexec/ld-elf.so.1' ? 'freebsd' : (data[7] === 12 || openbsd || metadata.interpreter === '/usr/libexec/ld.so' ? 'openbsd' : ([0, 3].includes(data[7]) ? 'linux' : null));
             if (dynamic) {
                 let strtab, strsize; const needed = [], step = wide ? 16 : 8;
                 if (dynamic.size / step > 65536) throw new Error('Too many ELF dynamic entries.');
@@ -144,6 +146,7 @@ const binary = (function () {
             if (versions.length) metadata.glibcRequired = versions.at(-1);
             if ((metadata.interpreter || '').includes('ld-musl-')) metadata.libc = 'musl';
             if (platform === 'freebsd') ids = cpu === 'x86_64' ? [30] : [];
+            else if (platform === 'openbsd') ids = cpu === 'x86_64' ? [37] : [];
             else if (platform === 'linux') ids = ({ x86: [5, 8, 15, 19], x86_64: [6, 18, 20, 33, 36], arm: [9, 10, 13, 24, 25, 27, 35], arm64: [26, 32, 41], mips: [7, 28], mipsel: [40], riscv64: [45] })[cpu] || [];
             if (cpu === 'arm') { metadata.requirementsIncomplete = true; warnings.push('ARM instruction set requirements need manual verification.'); }
             if (wide !== ['x86_64', 'arm64', 'riscv64'].includes(cpu)) throw new Error('ELF word size does not match its CPU.');
@@ -428,7 +431,8 @@ const compatibility = (function () {
             checks.push({ name: name, required: String(required || ''), detected: String(detected || 'Not reported'), status: result === true ? 'pass' : result === false ? 'fail' : 'unknown', advice: result === false || result == null ? advice : '' });
         }
         if (!facts || facts.version !== 1) return { status: 'unknown', checks: [], message: 'Device requirements have not been checked.' };
-        const platform = { windows: 'win32', linux: 'linux', macos: 'darwin', freebsd: 'freebsd' }[artifact.platform];
+        // The OpenBSD agent is built with _FREEBSD as well, so it reports process.platform as freebsd.
+        const platform = { windows: 'win32', linux: 'linux', macos: 'darwin', freebsd: 'freebsd', openbsd: 'freebsd' }[artifact.platform];
         add('Operating system', platform, facts.platform, platform && facts.platform ? platform === facts.platform : null, 'Choose a build for this operating system.');
         const architecture = { x86: [32, 3], x86_64: [64, 62], arm: [32, 40], arm64: [64, 183] }[artifact.cpu];
         if (metadata.interpreter) {
