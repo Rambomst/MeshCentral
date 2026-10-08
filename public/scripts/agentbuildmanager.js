@@ -159,12 +159,12 @@ function agentManagerGoto(mode) {
 function agentManagerOpen(mode, options) {
     if (xxdialogMode || !userinfo || userinfo.siteadmin != 0xFFFFFFFF) return false;
     var button = Q('idx_dlgOkButton'), cancel = Q('idx_dlgCancelButton');
-    var titles = { defaults: "Default agent downloads", 'import': "Import agent build", upload: "Upload agent build", usage: "Build usage", manage: "Manage agent build", cleardefault: "Clear server default", bulk: "Deploy agent build", job: "Agent deployment", jobs: "Agent deployments" };
+    var titles = { defaults: "Default agent downloads", 'import': "Import agent build", upload: "Upload agent build", usage: "Build usage", manage: "Manage agent build", cleardefault: "Clear server default", disableoverride: "Stop using the agents folder file", bulk: "Deploy agent build", job: "Agent deployment", jobs: "Agent deployments" };
     var title = titles[mode] || titles.jobs;
     agentManager = Object.assign({ mode: mode, offset: 0, focus: '', state: '', buttonText: button.tagName === 'INPUT' ? button.value : button.textContent, cancelText: cancel ? (cancel.tagName === 'INPUT' ? cancel.value : cancel.textContent) : '' }, options || {});
     // Manage is two fields and an action select; everything else carries device rows, file rows or 96
     // character hashes and needs the width the device dialog uses.
-    showAgentManagerDialog(title, (mode === 'manage' || mode === 'cleardefault') ? null : 'large');
+    showAgentManagerDialog(title, (mode === 'manage' || mode === 'cleardefault' || mode === 'disableoverride') ? null : 'large');
     if (Q('dialog')) Q('dialog').classList.add('agent-manager-dialog');
     agentBuildCancelButton("Close");
     agentManagerHtml('<p role="status">' + "Loading..." + '</p>');
@@ -178,6 +178,7 @@ function agentManagerOpen(mode, options) {
     if (mode === 'job') agentManagerJob(agentManager.id, 0);
     if (mode === 'defaults') agentManagerDefaults(false);
     if (mode === 'cleardefault') agentManagerClearDefaultForm();
+    if (mode === 'disableoverride') agentManagerDisableOverrideForm();
     return false;
 }
 function agentManagerRun(area, command, callback) {
@@ -424,6 +425,15 @@ function agentManagerClearDefaultForm() {
         agentManagerRun('catalog', { op: 'cleardefault', build: build, agentId: agentId }, function () { agentManagerClose(); agentCatalogFocus = null; refreshAgentCatalog(); });
     };
     agentManagerButton("Clear default", true);
+}
+function agentManagerDisableOverrideForm() {
+    var agentId = agentManager.agentId, label = agentManager.label || '';
+    agentManagerSubject("Stop using the agents folder file", agentManagerAgentType(agentId) + (label ? (' / ' + label) : ''));
+    agentManagerHtml('<p>' + EscapeHtml(format("{0} in {1} is renamed to {2}. The server then serves the build set as default for this agent type, or its release file. Devices following the default may update on reconnect.", label, agentManager.folder || '', label + '.disabled')) + '</p>');
+    agentManager.submit = function () {
+        agentManagerRun('catalog', { op: 'disableoverride', agentId: agentId }, function () { agentManagerClose(); agentCatalogFocus = null; refreshAgentCatalog(); });
+    };
+    agentManagerButton("Stop using file", true);
 }
 function agentManagerManageForm() {
     agentManagerRun('catalog', { op: 'list' }, function (data) {

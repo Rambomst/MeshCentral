@@ -195,8 +195,9 @@
 #agentManagerError:empty, #agentJobNotice:empty, #agentManageNote:empty, #agentUploadState:empty,
 #agentBatchFiles:empty, #agentManagerBody .agent-review-file p:empty { display: none; }
 /* The legacy dialog is 400px wide (300px on mobile), which cannot hold a device list or a 96 character
-   hash. setDialogMode clears the inline geometry on open, so the size belongs on the class. */
-#dialog.agent-manager-dialog { top: 5vh; max-height: 90vh; width: min(720px, 94vw); left: max(3vw, calc(50% - 360px)); }
+   hash. setDialogMode clears the inline geometry on open, so the size belongs on the class. The mobile
+   center() still writes an inline left for a 300px dialog on every resize, hence the !important. */
+#dialog.agent-manager-dialog { top: 5vh; max-height: 90vh; width: min(720px, 94vw); left: max(3vw, calc(50% - 360px)) !important; }
 #agentManagerBody p { margin: 8px 0; }
 #agentManagerBody summary { cursor: pointer; }
 #agentManagerBody code { overflow-wrap: anywhere; }

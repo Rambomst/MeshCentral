@@ -2312,6 +2312,24 @@ function CreateAgentBuildAdmin(parent, db, catalog) {
                 return { changed: true };
             }, true));
         }
+        if (request.op === 'disableoverride') {
+            if (parent.parent.multiServer) throw new Error('Agents folder changes are not available on peered servers.');
+            const arch = Number.isInteger(request.agentId) && request.agentId > 0 && request.agentId < 10000 && parent.parent.meshAgentsArchitectureNumbers[request.agentId];
+            if (!arch || !arch.localname) throw new Error('Invalid agent type');
+            return defaults.use(domain, async function () {
+                const filename = path.join(parent.parent.datapath, 'agents' + (domain.id ? '-' + domain.id : ''), arch.localname);
+                const stat = await fs.promises.lstat(filename).catch(() => null);
+                if (!stat || !stat.isFile()) throw new Error('This agent type has no file in the agents folder.');
+                let target = filename + '.disabled';
+                for (let i = 1; await fs.promises.lstat(target).then(() => true, () => false); i++) target = filename + '.disabled.' + i;
+                await fs.promises.rename(filename, target);
+                // The default domain signed its Windows agents from this file, so the fallback has to be signed again before it is served.
+                if (domain.id === '' && parent.parent.resignMeshAgents) await new Promise((resolve, reject) => parent.parent.resignMeshAgents(err => err ? reject(err) : resolve()));
+                else await defaults.reload(domain);
+                parent.parent.DispatchEvent(['*', user._id], null, { etype: 'server', action: 'agentbuildcatalog', domain: domain.id, userid: user._id, username: user.name, msg: 'Stopped using agents folder file: ' + arch.localname });
+                return { changed: true, renamed: path.basename(target) };
+            });
+        }
         if (!['archive', 'restore', 'remove'].includes(request.op)) throw new Error('Invalid operation');
         return defaults.use(domain, () => catalog.use(domain, request.build, async function () {
             const build = (await catalog.getCatalog(domain)).builds.find(x => x.id === request.build);

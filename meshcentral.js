@@ -3714,6 +3714,21 @@ function CreateMeshCentralServer(config, args) {
         Promise.resolve(obj.agentTablesReady).then(pass, pass);
     }
 
+    // Signs and reloads the default domain again, for example after an agents folder file stops being used.
+    obj.resignMeshAgents = function (func) {
+        const types = require('./agenttypes')();
+        // The signing pass drops a type's codesign flag while its agents folder file exists.
+        for (const id in types) { if ((types[id].codesign === true) && (obj.meshAgentsArchitectureNumbers[id] != null)) { obj.meshAgentsArchitectureNumbers[id].codesign = true; } }
+        Promise.resolve(obj.agentActivation).then(function () {
+            obj.agentActivation = new Promise(function (resolve) { obj.signMeshAgents(obj.config.domains[''], resolve); });
+            obj.agentActivation.then(function () {
+                obj.agentActivation = null;
+                obj.updateMeshTools();
+                obj.reloadMeshAgents(obj.config.domains[''], func);
+            });
+        });
+    }
+
     // Coalesce reloads so an older hash read cannot overwrite a newer selection.
     obj.reloadMeshAgents = function (domain, func) {
         const key = domain.id || '';
