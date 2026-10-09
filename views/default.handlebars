@@ -292,7 +292,7 @@
                                 <td tabindex=0 id=ServerStats class="topbar_td style3x" onmouseup=go(40,event) onkeypress="if (event.key == 'Enter') go(40)">Stats</td>
                                 <td tabindex=0 id=ServerConsole class="topbar_td style3x" onmouseup=go(115,event) onkeypress="if (event.key == 'Enter') go(115)">Console</td>
                                 <td tabindex=0 id=ServerTrace class="topbar_td style3x" onmouseup=go(41,event) onkeypress="if (event.key == 'Enter') go(41)">Trace</td>
-                                <td tabindex=0 id=ServerAgentBuilds class="topbar_td style3x" style="display:none" onmouseup=go(44,event) onkeypress="if (event.key == 'Enter') go(44)">Agent builds</td>
+                                <td tabindex=0 id=ServerAgentBuilds class="topbar_td style3x" style="display:none" onmouseup=go(44,event) onkeypress="if (event.key == 'Enter') go(44)">Agents</td>
                                 <td tabindex=0 id=ServerPlugins class="topbar_td style3x" onmouseup=go(42,event) onkeypress="if (event.key == 'Enter') go(42)">Plugins</td>
                                 <td class="topbar_td_end style3">&nbsp;</td>
                             </tr>
@@ -1346,7 +1346,7 @@
             <div id=p44 style="display:none">
                 <div id="p44info">
                     <div id="p44head">
-                        <div id="p44title"><h1>Agent builds</h1></div>
+                        <div id="p44title"><h1>Agents</h1></div>
                         <div class="areaHead"><div class="agent-catalog-toolbar"><div class="agent-catalog-actions"><input value="Upload build" type="button" onclick="agentManagerOpen('upload')" /><input value="Import build" type="button" onclick="agentManagerOpen('import')" /><input value="Deployments" type="button" onclick="agentManagerOpen('jobs')" /><input id="p44defaults" value="Default downloads" type="button" style="display:none" onclick="agentManagerOpen('defaults')" /></div><div class="agent-catalog-filters"><label for="p44group">Show</label><select id="p44group" onchange="filterAgentCatalog()"><option notransval=1 value="all">All agent files</option><option notransval=1 value="defaults">Current defaults</option><option notransval=1 value="builds">Additional builds</option><option notransval=1 value="bundled">Bundled agents</option><option notransval=1 value="archived">Archived builds</option></select><label for="p44search" class="visually-hidden">Filter agent files</label><input id="p44search" type="search" placeholder="Filter agent files" oninput="filterAgentCatalog()" /><input id="p44refresh" value="Refresh" type="button" onclick="refreshAgentCatalog()" /></div></div></div>
                         <p id="p44count" role="status" aria-live="polite"></p>
                         <p id="p44focus"></p>

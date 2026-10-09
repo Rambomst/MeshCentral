@@ -692,6 +692,8 @@ function CreateAgentBuildUsage(parent, db) {
             file.defaultBuild = { id: record.build, name: build ? build.name : (record.name || record.build), filename: record.filename };
             if (!((parent.parent.agentBuildDefaults || {})[domain.id] || {})[record.agentId]) file.defaultBuild.unavailable = true;
             else if (file.override) file.defaultBuild.overridden = true;
+            const artifact = build && build.artifacts.find(x => x.id === record.agentId && x.filename === record.filename);
+            if (artifact) { artifact.serverDefault = file.defaultBuild; build.serverDefault = true; }
         }
         for (const file of catalog.defaults) file.usage = counts(rows, { hash: file.agentHash, agentId: file.id });
         for (const build of catalog.builds) for (const file of build.artifacts) file.usage = counts(rows, { hash: file.agentHash, agentId: file.id, build: build.id, filename: file.filename });

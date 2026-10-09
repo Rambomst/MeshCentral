@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="{{lang}}">
-<head><meta charset="utf-8" /><title>Agent builds</title></head>
+<head><meta charset="utf-8" /><title>Agents</title></head>
 <body>
     <div id="agentCatalogContent">
         {{#each catalog.errors}}<p class="agent-error">{{this}}</p>{{/each}}
@@ -8,6 +8,7 @@
             {{#if catalog.downloads.activating}}<p class="agent-notice">Loading new default agent files. Refresh to see the updated defaults.</p>{{/if}}
             {{#each catalog.downloads.updates.repositories}}{{#if latest.updateAvailable}}<p class="agent-notice">Release available: <a href="{{latest.sourceUrl}}" target="_blank" rel="noopener noreferrer">{{repository}} {{latest.tag}}</a>. Import this release to review and test its files.</p>{{/if}}{{/each}}
         </div>
+        <p class="agent-note">Each upload or import adds a separate build, so you can keep several versions of the same agent file. Only one file per agent type is the server default, marked Server default. Change it with Manage build.</p>
         <section style="display:none" data-agent-group="defaults">
             <h2 class="agent-group-title">Current defaults <span class="agent-muted" data-agent-count></span></h2>
             <p class="agent-note">Device counts are registered devices of each agent type, including offline devices and devices that hold or pin another agent file.</p>
@@ -32,7 +33,7 @@
         <section class="agent-build" style="display:none" data-agent-group="builds" data-agent-build="{{id}}" data-agent-archived="{{archived}}" data-agent-name="{{name}} {{channel}}">
             <div class="agent-build-head">
                 <details class="agent-build-body" data-agent-detail="build:{{id}}" data-agent-expand ontoggle="agentCatalogToggled(this)">
-                    <summary class="agent-build-summary"><b class="agent-build-name" id="agentBuildName-{{id}}">{{name}}</b> <span class="agent-muted">{{channel}}</span> <span class="agent-muted" data-agent-count></span> <span class="agent-error" data-agent-alert></span></summary>
+                    <summary class="agent-build-summary"><b class="agent-build-name" id="agentBuildName-{{id}}">{{name}}</b> <span class="agent-muted">{{channel}}</span>{{#if serverDefault}} <span class="agent-default">Server default</span>{{/if}} <span class="agent-muted" data-agent-count></span> <span class="agent-error" data-agent-alert></span></summary>
                     <details class="agent-provenance" data-agent-detail="source:{{id}}" ontoggle="agentCatalogToggled(this)"><summary>Source and verification</summary>
                         <div class="agent-hash">Build ID <code class="agent-build-id">{{id}}</code><button type="button" class="agent-linkbutton" onclick="agentManagerCopyBuildId(this)">Copy build ID</button></div>
                         {{#if commit}}<div class="agent-source">Source commit: {{#if sourceUrl}}<a href="{{sourceUrl}}" target="_blank" rel="noopener noreferrer">{{commit}}</a>{{else}}{{commit}}{{/if}} {{#if commitTime}}<span data-agent-time="{{commitTime}}">{{commitTime}}</span>{{/if}}</div>{{/if}}
@@ -48,7 +49,7 @@
                         <div role="rowgroup">
                         {{#each artifacts}}
                             <div role="row" data-agent-row data-agent-file="{{filename}}" data-agent-hash="{{agentHash}}" data-agent-verify="{{#if matches}}match{{else}}error{{/if}}" data-agent-search="{{../id}} {{filename}} {{platform}} {{cpu}} {{id}} {{requirements}} {{status}} {{agentHash}}">
-                                <div role="cell" class="agent-file"><span class="agent-cell-label">Agent file</span>{{filename}}{{#if matches}}<div class="agent-file-tools"><a download href="{{@root.catalogUrl}}&build={{../id}}&agentid={{id}}&file={{filename}}">Download</a></div>{{/if}}</div>
+                                <div role="cell" class="agent-file"><span class="agent-cell-label">Agent file</span>{{filename}}{{#if serverDefault}} <span class="agent-default">Server default</span>{{#if serverDefault.overridden}}<div class="agent-warn">Overridden by the agents folder</div>{{/if}}{{/if}}{{#if matches}}<div class="agent-file-tools"><a download href="{{@root.catalogUrl}}&build={{../id}}&agentid={{id}}&file={{filename}}">Download</a></div>{{/if}}</div>
                                 <div role="cell"><span class="agent-cell-label">Agent type</span>{{platform}} / {{cpu}} <span class="agent-muted">({{id}})</span></div>
                                 <div role="cell"><span class="agent-cell-label">Requirements</span>{{#if requirements}}{{requirements}}{{else}}<span class="agent-muted">None recorded</span>{{/if}}</div>
                                 <div role="cell" class="agent-number"><span class="agent-cell-label">Size</span><span data-agent-bytes="{{size}}">{{size}}</span></div>

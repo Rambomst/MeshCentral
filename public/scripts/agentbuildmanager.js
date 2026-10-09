@@ -261,7 +261,7 @@ function agentManagerDefaults(retry) {
             html += '<div class="agent-manager-row"><div><b>' + EscapeHtml(file.filename) + '</b></div><div class="' + fileState.level + '">' + EscapeHtml(fileState.text) + '</div><div class="agent-manager-detail">' + detail + '</div></div>';
         }
         html += agentManagerDefaultsReleases(result);
-        html += '<details data-agent-detail="offline"><summary>' + "About default downloads" + '</summary><p>' + "Restoring files does not change device policies. It only fetches the release files this server is configured to serve." + '</p><p>' + "Without internet access, upload the required release files into Agent builds, then restore missing files here. The files must match the hashes in the release manifest." + '</p></details>';
+        html += '<details data-agent-detail="offline"><summary>' + "About default downloads" + '</summary><p>' + "Restoring files does not change device policies. It only fetches the release files this server is configured to serve." + '</p><p>' + "Without internet access, upload the required release files with Upload build, then restore missing files here. The files must match the hashes in the release manifest." + '</p></details>';
         agentManagerHtml(html);
         current.submit = (result.canManage && result.files.length) ? function () { agentManagerDefaults(true); } : null;
         if (result.busy) agentManagerButton("Restoring files...", false, '');
@@ -282,7 +282,7 @@ function agentManagerUploadForm() {
     agentManagerSubject("Upload agent files", "Review the detected platform, requirements and hashes before the files become a build.");
     agentManagerStateLine('', '');
     agentManagerNotice('');
-    agentManagerHtml(agentManagerControl('agentUploadFiles', "Agent files", '<input id="agentUploadFiles" type="file" multiple onchange="agentManagerUploadSelected()" />', "Up to 16 files, 64 MiB each and 128 MiB in total.") + '<p id="agentUploadState" role="status" aria-live="polite"></p><progress id="agentUploadProgress" max="100" value="0" style="display:none"></progress>');
+    agentManagerHtml(agentManagerControl('agentUploadFiles', "Agent files", '<input id="agentUploadFiles" type="file" multiple onchange="agentManagerUploadSelected()" />', "Up to 16 files, 64 MiB each and 128 MiB in total.") + '<p class="agent-muted">' + "Each upload adds a separate build and keeps earlier versions of the same files. It does not change the server default." + '</p><p id="agentUploadState" role="status" aria-live="polite"></p><progress id="agentUploadProgress" max="100" value="0" style="display:none"></progress>');
     agentManager.submit = agentManagerUpload; agentManager.focus = 'agentUploadFiles';
     agentManagerButton("Review files", false, "Select the agent files to upload.");
 }
@@ -442,6 +442,7 @@ function agentManagerManageForm() {
         agentManager.buildInfo = build;
         agentManager.overrideFolder = data.overrideFolder;
         agentManager.overridden = (data.defaults || []).filter(function (x) { return x.override && build.artifacts.some(function (a) { return a.matches && a.id === x.id; }); }).map(function (x) { return x.filename; });
+        agentManager.replaces = (data.defaults || []).filter(function (x) { return x.defaultBuild && (x.defaultBuild.id !== build.id) && build.artifacts.some(function (a) { return a.matches && a.id === x.id; }); }).map(function (x) { return agentManagerAgentType(x.id) + ' (' + x.defaultBuild.name + ')'; });
         var isDefault = (data.defaults || []).some(function (x) { return x.defaultBuild && x.defaultBuild.id === build.id; });
         var canDefault = !build.archived && build.artifacts.some(function (x) { return x.matches; });
         agentManagerSubject(build.name, build.channel + ' / ' + build.artifacts.length + ' ' + "agent files" + (build.archived ? (' / ' + "Archived") : ''));
@@ -453,6 +454,7 @@ function agentManagerManageForm() {
         var fileRows = '';
         for (var fi = 0; fi < build.artifacts.length; fi++) {
             var art = build.artifacts[fi], tags = [art.kvm ? "Remote desktop supported" : "No remote desktop support"];
+            if (art.serverDefault) { tags.unshift("Server default"); }
             if (art.customized) { tags.push("Server branding applied, re-signed"); }
             else if (art.signed) { tags.push("Code-signed by the server"); }
             else if (art.signature && art.signature.indexOf('Present') === 0) { tags.push("Signed before upload"); }
@@ -484,6 +486,7 @@ function agentManagerManageChanged() {
         cleardefault: "Removes this build selection. These agent types fall back to the remaining server, domain, release or bundled defaults. Devices following the default may update on reconnect."
     };
     var html = '<p class="' + ((action === 'remove' || action === 'setdefault') ? 'agent-warn' : 'agent-muted') + '">' + notes[action] + '</p>';
+    if ((action === 'setdefault') && agentManager.replaces && agentManager.replaces.length) html += '<p class="agent-muted">' + EscapeHtml(format("This replaces the current server default for: {0}", agentManager.replaces.join(', '))) + '</p>';
     if ((action === 'setdefault') && agentManager.overridden && agentManager.overridden.length) html += '<p class="agent-warn">' + EscapeHtml(format("Agent files in {0} take priority over this build for: {1}", agentManager.overrideFolder, agentManager.overridden.join(', '))) + '</p>';
     agentBuildHtml('agentManageNote', html);
     if (Q('agentManageConfirmDefault')) {
