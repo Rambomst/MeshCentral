@@ -6891,6 +6891,7 @@ module.exports.CreateMeshUser = function (parent, db, ws, req, args, domain, use
         else {
             emailuser = parent.users[command.userid];
             if (emailuser == null) { errMsg = 'Invalid userid'; }
+            else if ((obj.crossDomain !== true) && (emailuser.domain != domain.id)) { errMsg = 'Invalid userid'; } // Operation only valid for current domain
             else if (emailuser.email == null) { errMsg = 'No validated email address for this user'; }
             else if (emailuser.emailVerified !== true) { errMsg = 'No validated email address for this user'; }
         }
@@ -7443,6 +7444,7 @@ module.exports.CreateMeshUser = function (parent, db, ws, req, args, domain, use
         else {
             smsuser = parent.users[command.userid];
             if (smsuser == null) { errMsg = "Invalid username"; }
+            else if ((obj.crossDomain !== true) && (smsuser.domain != domain.id)) { errMsg = "Invalid username"; } // Operation only valid for current domain
             else if (smsuser.phone == null) { errMsg = "No phone number for this user"; }
         }
 
@@ -7466,6 +7468,7 @@ module.exports.CreateMeshUser = function (parent, db, ws, req, args, domain, use
         else {
             msguser = parent.users[command.userid];
             if (msguser == null) { errMsg = "Invalid username"; }
+            else if ((obj.crossDomain !== true) && (msguser.domain != domain.id)) { errMsg = "Invalid username"; } // Operation only valid for current domain
             else if (msguser.msghandle == null) { errMsg = "No messaging service configured for this user"; }
         }
 
