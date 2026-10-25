@@ -496,8 +496,11 @@ function CreateDesktopMultiplexor(parent, domain, nodeid, id, func) {
     }
 
     function sendImage(viewer, image) {
-        // Do not push an AVIF tile to a viewer whose browser cannot decode it.
-        if (image.codec == 2 && !(viewer.autoFormats & 4) && viewer.imageType != 5) { setTimeout(function () { sendViewerNext(viewer); }, 0); return; }
+        // Cached tiles can predate this viewer's codec negotiation.
+        if (image.type > 1 && image.type != viewer.imageType && !(viewer.imageType == 0 && (image.type == 4 ? viewer.autoFormats & 2 : image.type == 5 ? viewer.autoFormats & 4 : false))) {
+            setTimeout(function () { sendViewerNext(viewer); }, 0);
+            return;
+        }
         if (image.metadata) {
             var metadata = Buffer.from(image.metadata), rate = upstreamFeedback && Date.now() - upstreamFeedback.time <= 60000 ? upstreamFeedback.rate : 0;
             if (viewer.encodingFeedback && Date.now() - viewer.encodingFeedback.time <= 60000) rate = rate ? Math.min(rate, viewer.encodingFeedback.rate) : viewer.encodingFeedback.rate;
@@ -652,7 +655,7 @@ function CreateDesktopMultiplexor(parent, domain, nodeid, id, func) {
         }
         if (!force && obj.autoFormats == formats && obj.imageType == type && obj.imageCompression == quality && obj.imageScaling == scaling && obj.imageFrameRate == frameRate) return;
         // A viewer that lost a format needs the cached tiles resent in one it can still decode.
-        var refresh = (obj.imageType == 0 && ((obj.autoFormats & 6) & ~(type == 0 ? formats : 1)));
+        var refresh = (obj.imageType != type || (obj.imageType == 0 && (obj.autoFormats & ~formats)));
         obj.imageType = type;
         obj.autoFormats = formats;
         obj.imageCompression = quality;
@@ -671,6 +674,8 @@ function CreateDesktopMultiplexor(parent, domain, nodeid, id, func) {
         // The agent reads its first message after 'c' as the protocol selection, so wait for connect.
         if (!obj.viewerConnected) return;
         obj.sendToAgent(cmd);
+        // The first viewer's query can arrive before the agent tunnel exists.
+        if (force && !obj.imageCapabilities) obj.sendToAgent(Buffer.from([0, 90, 0, 8, 67, 65, 80, 83]));
         if (refresh) obj.sendToAgent(Buffer.from([0, 6, 0, 4]));
     }
 
@@ -849,7 +854,7 @@ function CreateDesktopMultiplexor(parent, domain, nodeid, id, func) {
                 obj.counter++;
 
                 // Keep a reference to this image & how many tiles it covers (pixels/codec drive the bandwidth probe)
-                obj.images[obj.counter] = { next: null, prev: obj.lastData, data: jumboData, metadata: metadata, pixels: dimensions.width * dimensions.height, codec: dimensions.type == 'avif' ? 2 : dimensions.type == 'webp' ? 1 : 0 };
+                obj.images[obj.counter] = { next: null, prev: obj.lastData, data: jumboData, metadata: metadata, pixels: dimensions.width * dimensions.height, type: { jpg: 1, png: 2, tiff: 3, webp: 4, avif: 5 }[dimensions.type], codec: dimensions.type == 'avif' ? 2 : dimensions.type == 'webp' ? 1 : 0 };
                 obj.images[obj.lastData].next = obj.counter;
                 obj.lastData = obj.counter;
                 obj.imagesCounters[obj.counter] = (sw * sh);

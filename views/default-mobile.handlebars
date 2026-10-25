@@ -4960,14 +4960,15 @@
 
         // Show or hide the manual codec/quality/frame-rate rows based on the Adaptive/Manual switch
         var desktopSettingsMultiple = false;
-        function updateDesktopSettingsMode() {
+        function updateDesktopSettingsMode(codec) {
             var targets = (desktop && desktop.contype == 1) ? [desktop.m] : [];
             var supported = targets.length ? 31 : 1, adaptive = true;
             for (var i = 0; i < targets.length; i++) {
                 if (targets[i].GetSupportedImageTypes) supported &= targets[i].GetSupportedImageTypes();
                 if (targets[i].AdaptiveSupported === false) adaptive = false;
             }
-            var codec = d7encoding.value, options = '', names = ['JPEG', 'PNG', 'TIFF', 'WEBP', 'AVIF'];
+            if (typeof codec != 'string' && typeof codec != 'number') codec = d7encoding.value;
+            var options = '', names = ['JPEG', 'PNG', 'TIFF', 'WEBP', 'AVIF'];
             for (var i = 0; i < names.length; i++) { if (supported & (1 << i)) options += '<option value="' + (i + 1) + '">' + names[i] + '</option>'; }
             QH('d7encoding', options);
             d7encoding.value = (supported & (1 << (parseInt(codec) - 1))) ? codec : 1;
@@ -5013,8 +5014,7 @@
             if (desktopsettings.agentMode == null) { desktopsettings.agentMode = (desktopsettings.agentencoding == 0) ? 'adaptive' : 'manual'; }
             if (desktopsettings.agentManualCodec == null) { desktopsettings.agentManualCodec = (desktopsettings.agentencoding != null && desktopsettings.agentencoding != 0) ? desktopsettings.agentencoding : 4; }
             d7agentmode.value = desktopsettings.agentMode;
-            d7encoding.value = desktopsettings.agentManualCodec;
-            updateDesktopSettingsMode();
+            updateDesktopSettingsMode(desktopsettings.agentManualCodec);
             if (ops.indexOf(parseInt(desktopsettings.quality)) >= 0) { d7bitmapquality.value = desktopsettings.quality; }
             d7bitmapscaling.value = desktopsettings.scaling;
             if (desktopsettings.framerate) { d7framelimiter.value = desktopsettings.framerate; }

@@ -89,7 +89,8 @@ var CreateAgentRemoteDesktop = function (canvasid, scrolldiv) {
         capabilityTimer = setTimeout(function () {
             capabilityTimer = null;
             if (obj.AgentImageTypes == null) {
-                obj.AgentImageTypes = 1;
+                // Older agents have no capability reply, but still accept the existing manual formats.
+                obj.AgentImageTypes = 15;
                 obj.AdaptiveSupported = false;
                 obj.SendCompressionLevel(obj.RequestedImageType == null ? obj.ImageType : obj.RequestedImageType);
                 encodingChanged();
@@ -404,15 +405,16 @@ var CreateAgentRemoteDesktop = function (canvasid, scrolldiv) {
     function checkAvifSupport() {
         if (obj.AutoAVIF != null || avifPending) return;
         avifPending = true;
-        function available(supported) {
+        function available(supported, cached) {
             avifPending = false;
             obj.AutoAVIF = supported;
             if (supported) obj.BrowserImageTypes |= 16; else obj.BrowserImageTypes &= ~16;
-            if (supported && obj.State != 0) obj.SendCompressionLevel(obj.RequestedImageType == null ? obj.ImageType : obj.RequestedImageType);
+            var type = obj.RequestedImageType == null ? obj.ImageType : obj.RequestedImageType;
+            if (supported && !cached && obj.State != 0 && (type == 0 || type == 5)) obj.SendCompressionLevel(type);
             encodingChanged();
         }
         var factory = CreateAgentRemoteDesktop;
-        if (typeof factory.avifSupport == 'boolean') { available(factory.avifSupport); return; }
+        if (typeof factory.avifSupport == 'boolean') { available(factory.avifSupport, true); return; }
         if (factory.avifCallbacks) { factory.avifCallbacks.push(available); return; }
         factory.avifCallbacks = [available];
         var probe = new Image(), timer = setTimeout(function () { finish(false); }, 5000);
