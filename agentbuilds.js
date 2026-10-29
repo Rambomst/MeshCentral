@@ -587,6 +587,11 @@ function CreateAgentDefaults(parent, options = {}) {
             try { if (!regular(local) || await verified(local, file)) continue; } catch (ex) { continue; }
             errors.push('Ignoring "' + local + '": it does not match the pinned release file. Custom agents belong in "' + path.join(parent.datapath, 'agents') + '".');
         }
+        for (const type of Object.values(parent.meshAgentsArchitectureNumbers)) {
+            const local = path.join(bundled, type.localname);
+            if ((type.base == null) || !regular(local)) continue;
+            errors.push('Ignoring "' + local + '": ' + type.localname + ' is built from ' + type.base + ' and meshcmd.js. Custom agents belong in "' + path.join(parent.datapath, 'agents') + '".');
+        }
     }
     function prepare(localFiles) {
         if (busy) return busy;
