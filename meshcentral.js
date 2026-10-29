@@ -3480,6 +3480,8 @@ function CreateMeshCentralServer(config, args) {
                     if ((destinationAgentOk == true) && (originalAgent.getHashOfSection('sha384', '.text').compare(destinationAgent.getHashOfSection('sha384', '.text')) != 0)) { destinationAgentOk = false; }
                     if ((destinationAgentOk == true) && (originalAgent.getHashOfSection('sha384', '.data').compare(destinationAgent.getHashOfSection('sha384', '.data')) != 0)) { destinationAgentOk = false; }
                     if ((destinationAgentOk == true) && (originalAgent.getHashOfSection('sha384', '.rdata').compare(destinationAgent.getHashOfSection('sha384', '.rdata')) != 0)) { destinationAgentOk = false; }
+                    // MeshCmd's script is appended after the PE sections.
+                    if ((destinationAgentOk == true) && (originalAgent.getHashOfOverlay('sha384').compare(destinationAgent.getHashOfOverlay('sha384')) != 0)) { destinationAgentOk = false; }
 
                     // We are done comparing the destination agent, close it.
                     destinationAgent.close();
